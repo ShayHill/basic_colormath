@@ -1,0 +1,144 @@
+# ci:
+
+#   autofix_commit_msg: 'style: pre-commit fixes'
+#   autoupdate_commit_msg: 'chore: update pre-commit hooks'
+
+# exclude: "tests"
+
+repos:
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+    - id: check-added-large-files
+    - id: check-ast
+    - id: check-case-conflict
+    - id: check-merge-conflict
+    - id: check-symlinks
+    - id: check-yaml
+    - id: check-toml
+    - id: check-xml
+    - id: debug-statements
+    - id: detect-private-key
+    - id: end-of-file-fixer
+    - id: mixed-line-ending
+    - id: requirements-txt-fixer
+    - id: trailing-whitespace
+    - id: fix-encoding-pragma
+      args:
+      - --remove
+    - id: name-tests-test
+      args:
+      - --pytest-test-first
+
+- repo: https://github.com/python-poetry/poetry
+  rev: 1.3.0
+  hooks:
+    - id: poetry-check
+    - id: poetry-lock
+    # - id: poetry-export
+    #   args:
+    #   - -f requirements.txt
+    #   - -o requirements.txt
+
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v0.991
+  hooks:
+  - id: mypy
+    name: mypy
+    language: python
+    language_version: python 3.11
+    types: [python]
+    require_serial: true
+    verbose: true
+    additional_dependencies: ['types-requests']
+    # exclude: "tests"
+    # args:
+    # - --ignore-missing-imports
+    # files: ^(src/|tests/)
+
+- repo: https://github.com/PyCQA/isort
+  rev: 5.12.0
+  hooks:
+  - id: isort
+    args: ["--profile", "black", "--filter-files", "--combine-as"]
+
+- repo: https://github.com/psf/black
+  rev: 22.12.0
+  hooks:
+  - id: black
+    language_version: python3.10
+    args: ["--skip-magic-trailing-comma"]
+
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.3.1
+  hooks:
+  - args:
+    - --py37-plus
+    id: pyupgrade
+
+- repo: https://github.com/Lucas-C/pre-commit-hooks
+  rev: v1.4.2
+  hooks:
+  - id: remove-tabs
+
+# - repo: https://github.com/commitizen-tools/commitizen
+#   rev: v2.40.0
+#   hooks:
+#   - id: commitizen
+
+- repo: https://github.com/pre-commit/mirrors-pylint
+  rev: v3.0.0a5
+  hooks:
+  - id: pylint
+    exclude: "tests"
+    name: pylint
+    args:
+    - --good-names=i,j,_,f,Lp,C1,C2,G,C1p,C2p,Cp,Hp,T,delta_Lp,delta_Cp,delta_Hp,S_L,S_C,S_H,R_C,R_T,x,y,z,ps
+    - --disable=protected-access
+    - --disable=no-member
+    - --disable=import-error
+    - --disable=no-name-in-module
+    - --disable=pointless-string-statement
+    - --disable=wrong-import-position
+    - --disable=too-many-locals
+    - --load-plugins=pylint.extensions.docparams
+    - --accept-no-param-doc=n
+    - --accept-no-raise-doc=n
+    - --accept-no-return-doc=n
+    - --accept-no-yields-doc=n
+
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  # ignores
+  # ANN101 Missing type annotation for self in method
+  # ANN102 Missing type annotation for cls in classmethod
+  # ANN201 Missing return type annotation for public function
+  # ANN202 Missing return type annotation for private function (wants -> None everywhere)
+  # B905 zip() without an explicit strict= parameter
+  # COM812 Trailing comma missing
+  # D203 1 blank line required before class docstring
+  # D213 multi line summary second line
+  # I001 Inport block is un-sorted or un-formatted
+  # ISC003 Explicitly concatenated string should be implicitly concatenated
+  # N802 Function name should be lowercase
+  # N806 Variable in function should be lowercase
+  # PGH003 Use specific rule codes when ignoring type issues
+  # PLR0913 Too many arguments to function call
+  # PTH108 os.unlink should be replaced by .unlink()
+  #
+  # PLR2004 Magic value used in comparison
+  # UP006 Use tuple instead of Tuple for type annotations
+  rev: 'v0.0.238'
+  hooks:
+    - id: ruff
+      exclude: "tests"
+      args:
+      - --select=ALL
+      - --ignore=ANN101,ANN102,ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108,PLR2004,UP006
+      # - --fix
+
+# reads pyproject.toml for additional config
+- repo: https://github.com/RobertCraigie/pyright-python
+  rev: v1.1.291
+  hooks:
+    - id: pyright

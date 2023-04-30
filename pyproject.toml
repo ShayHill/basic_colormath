@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "basic-colormath"
+version = "0.0.1"
+description = ""
+authors = ["Shay Hill <shay_public@hotmail.com>"]
+readme = "README.md"
+packages = [{include = "basic_colormath", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+
+[tool.poetry.group.dev.dependencies]
+numpy = "^1.24.3"
+colormath = "^3.0.0"
+commitizen = "^3.1.1"
+pre-commit = "^3.2.2"
+pytest = "^7.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.0.1"
+tag_format = "$version"
+major_version_zero = true
+version_files = [
+    "pyproject.toml:^version"
+]
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/__pycache__.py"]
+
+pythonVersion = "3.8"
+pythonPlatform = "Any"
+
+typeCheckingMode = "strict"
+reportShadowedImports = true
+reportCallInDefaultInitializer = true
+reportImplicitStringConcatenation = true
+reportMissingSuperCall = true
+reportPropertyTypeMismatch = true
+reportUninitializedInstanceVariable = true
+reportUnnecessaryTypeIgnoreComment = true
+reportUnusedCallResult = true
+
+venvPath = "C:\\Users\\shaya\\AppData\\Local\\pypoetry\\Cache\\virtualenvs"
+venv = "C:\\Users\\shaya\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\basic-colormath-aS7dUWmf-py3.11"
