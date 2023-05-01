@@ -29,8 +29,9 @@ jobs:
     # if: "!startsWith(github.event.head_commit.message, 'bump:')"
     runs-on: ubuntu-latest
     name: "Bump version and create changelog with commitizen"
+    continue-on-error: true
     needs: tests
-    # if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/dev'
     steps:
       - name: Check out
         uses: actions/checkout@v3
@@ -47,7 +48,8 @@ jobs:
 
   deploy-on-testpypi:
     runs-on: windows-latest
-    needs: [tests, bump_version]
+    continue-on-error: true
+    needs: [tests]
     if: github.ref == 'refs/heads/dev'
     steps:
       - uses: actions/checkout@v3
@@ -60,7 +62,8 @@ jobs:
 
   deploy-on-pypi:
     runs-on: windows-latest
-    needs: [tests, bump_version]
+    continue-on-error: true
+    needs: [tests]
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
