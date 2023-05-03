@@ -1,7 +1,5 @@
-# ci:
-
-#   autofix_commit_msg: 'style: pre-commit fixes'
-#   autoupdate_commit_msg: 'chore: update pre-commit hooks'
+ci:
+  skip: [poetry-lock,pyright]
 
 # exclude: "tests"
 
@@ -32,7 +30,7 @@ repos:
       - --pytest-test-first
 
 - repo: https://github.com/python-poetry/poetry
-  rev: 1.3.0
+  rev: 1.4.0
   hooks:
     - id: poetry-check
     - id: poetry-lock
@@ -42,7 +40,7 @@ repos:
     #   - -o requirements.txt
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v0.991
+  rev: v1.2.0
   hooks:
   - id: mypy
     name: mypy
@@ -64,21 +62,21 @@ repos:
     args: ["--profile", "black", "--filter-files", "--combine-as"]
 
 - repo: https://github.com/psf/black
-  rev: 22.12.0
+  rev: 23.3.0
   hooks:
   - id: black
-    language_version: python3.10
+    language_version: python3.8
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.3.1
+  rev: v3.3.2
   hooks:
   - args:
-    - --py37-plus
+    - --py38-plus
     id: pyupgrade
 
 - repo: https://github.com/Lucas-C/pre-commit-hooks
-  rev: v1.4.2
+  rev: v1.5.1
   hooks:
   - id: remove-tabs
 
@@ -128,17 +126,19 @@ repos:
   #
   # PLR2004 Magic value used in comparison
   # UP006 Use tuple instead of Tuple for type annotations
-  rev: 'v0.0.238'
+  # UP035 typing.Tuple is deprecated
+  # UP038 Use X | Y in isinstance call instead of (X, Y)
+  rev: 'v0.0.264'
   hooks:
     - id: ruff
       exclude: "tests"
       args:
       - --select=ALL
-      - --ignore=ANN101,ANN102,ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108,PLR2004,UP006
+      - --ignore=ANN101,ANN102,ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108,PLR2004,UP006,UP035,UP038
       # - --fix
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.291
+  rev: v1.1.306
   hooks:
     - id: pyright
