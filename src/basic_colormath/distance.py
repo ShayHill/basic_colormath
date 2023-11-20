@@ -73,6 +73,9 @@ _16_116THS = 16 / 116
 # an illuminant argument
 _XYZ_ILLUM = (0.95047, 1.0, 1.08883)
 
+# RGB [0..255], [0..255], [0.255]
+# XYZ [0.0, 1.0286], [0.0, 1.0822], [0.0, 1.178]
+# Lab [0.0, 100], [-86.183, 98.235], [-107.865, 94.477]
 
 def _xyz_to_lab(xyz: _Triple) -> Lab:
     """Convert XYZ to Lab.
@@ -94,6 +97,7 @@ def _xyz_to_lab(xyz: _Triple) -> Lab:
     lab_a = 500 * (x - y)
     lab_b = 200 * (y - z)
     return lab_l, lab_a, lab_b
+
 
 
 _RAD_6 = math.radians(6)
@@ -195,6 +199,7 @@ def get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
     ) ** 0.5
 
 
+
 def get_sqeuclidean(rgb_a: RGB, rgb_b: RGB) -> float:
     """Calculate the squared Euclidean distance between two RGB colors.
 
@@ -253,3 +258,5 @@ def get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
     :return: The Delta E (CIE 2000) between the two hex colors.
     """
     return get_delta_e_lab(hex_to_lab(hex_a), hex_to_lab(hex_b))
+
+breakpoint()
