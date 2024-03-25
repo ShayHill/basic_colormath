@@ -26,6 +26,7 @@ I've tried to preserve Bruce Lindbloom's naming conventions so you can follow al
 :author: Shay Hill
 :created: 2023-04-29
 """
+
 from __future__ import annotations
 
 import math
