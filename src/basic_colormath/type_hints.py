@@ -3,6 +3,7 @@
 :author: Shay Hill
 :created: 2023-04-30
 """
+
 from typing import Tuple
 
 # Type annotations lose Python 3.8 compatibility. Not enough justification IMO, but
