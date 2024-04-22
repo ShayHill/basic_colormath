@@ -6,7 +6,7 @@ ci:
 repos:
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.6.0
   hooks:
     - id: check-added-large-files
     - id: check-ast
@@ -30,7 +30,7 @@ repos:
       - --pytest-test-first
 
 - repo: https://github.com/python-poetry/poetry
-  rev: 1.4.0
+  rev: 1.8.0
   hooks:
     - id: poetry-check
     - id: poetry-lock
@@ -40,7 +40,7 @@ repos:
     #   - -o requirements.txt
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.2.0
+  rev: v1.9.0
   hooks:
   - id: mypy
     name: mypy
@@ -56,27 +56,27 @@ repos:
     # files: ^(src/|tests/)
 
 - repo: https://github.com/PyCQA/isort
-  rev: 5.12.0
+  rev: 5.13.2
   hooks:
   - id: isort
     args: ["--profile", "black", "--filter-files", "--combine-as"]
 
 - repo: https://github.com/psf/black
-  rev: 23.3.0
+  rev: 24.4.0
   hooks:
   - id: black
     language_version: python3.8
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.3.2
+  rev: v3.15.2
   hooks:
   - args:
     - --py38-plus
     id: pyupgrade
 
 - repo: https://github.com/Lucas-C/pre-commit-hooks
-  rev: v1.5.1
+  rev: v1.5.5
   hooks:
   - id: remove-tabs
 
@@ -106,7 +106,7 @@ repos:
     - --accept-no-return-doc=n
     - --accept-no-yields-doc=n
 
-- repo: https://github.com/charliermarsh/ruff-pre-commit
+- repo: https://github.com/astral-sh/ruff-pre-commit
   # ignores
   # ANN101 Missing type annotation for self in method
   # ANN102 Missing type annotation for cls in classmethod
@@ -128,7 +128,7 @@ repos:
   # UP006 Use tuple instead of Tuple for type annotations
   # UP035 typing.Tuple is deprecated
   # UP038 Use X | Y in isinstance call instead of (X, Y)
-  rev: 'v0.0.264'
+  rev: 'v0.4.1'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -139,6 +139,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.306
+  rev: v1.1.359
   hooks:
     - id: pyright
