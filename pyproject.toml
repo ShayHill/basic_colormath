@@ -1,34 +1,46 @@
-[tool.poetry]
-name = "basic-colormath"
+[project]
+name = "basic_colormath2"
 version = "0.1.0"
-description = ""
-authors = ["Shay Hill <shay_public@hotmail.com>"]
+description = "Simple color conversion and perceptual (DeltaE CIE 2000) difference"
+authors = [{ name = "Shay Hill", email = "shay_public@hotmail.com" }]
+license = {text = "MIT"}
 readme = "README.md"
-packages = [{include = "basic_colormath", from = "src"}]
+requires-python = ">=3.8"
+dependencies = []
 
-[tool.poetry.dependencies]
-python = "^3.8"
-
-
-[tool.poetry.group.dev.dependencies]
-numpy = "^1.24.3"
-colormath = "^3.0.0"
-commitizen = "^3.1.1"
-pre-commit = "^3.2.2"
-pytest = "^7.3.1"
+[project.optional-dependencies]
+dev = ["commitizen", "colormath", "numpy", "pre-commit", "pytest", "tox"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
 
 [tool.commitizen]
 name = "cz_conventional_commits"
 version = "0.1.0"
 tag_format = "$version"
-major_version_zero = true
-version_files = [
-    "pyproject.toml:^version"
-]
+major-version-zero = true
+version_files = ["pyproject.toml:^version"]
+
+
+[tool.isort]
+profile = "black"
+
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{38,39,310,311,312}
+
+[testenv]
+deps =
+    pytest
+    numpy
+    colormath
+commands = pytest
+"""
+
 
 [tool.pyright]
 include = ["src"]
@@ -41,11 +53,11 @@ typeCheckingMode = "strict"
 reportShadowedImports = true
 reportCallInDefaultInitializer = true
 reportImplicitStringConcatenation = true
-reportMissingSuperCall = true
+# reportMissingSuperCall = true
 reportPropertyTypeMismatch = true
 reportUninitializedInstanceVariable = true
 reportUnnecessaryTypeIgnoreComment = true
 reportUnusedCallResult = true
 
-venvPath = "C:\\Users\\shaya\\AppData\\Local\\pypoetry\\Cache\\virtualenvs"
-venv = "C:\\Users\\shaya\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\basic-colormath-aS7dUWmf-py3.11"
+venvPath = "."
+venv = "./venv"

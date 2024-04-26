@@ -1,0 +1,80 @@
+{
+    "$schema": "https://puremourning.github.io/vimspector/schema/vimspector.schema.json",
+    "adapters": {
+        "run_with_debugpy": {
+            "extends": "debugpy",
+            "command": [
+                "${workspaceRoot}/run_with_debugpy"
+            ],
+            "port": 9876,
+            "env": {
+                "DEBUG_PORT": "9876"
+            }
+        }
+    },
+    "configurations": {
+        "run": {
+            "adapter": "debugpy",
+            "configuration": {
+                "name": "run this Python file",
+                "request": "launch",
+                "type": "python",
+                "cwd": "${workspaceRoot}",
+                "python": "${workspaceRoot}/venv/Scripts/python.exe",
+                "program": "${file}",
+                "stopOnEntry": false,
+                "console": "integratedTerminal"
+            },
+            "breakpoints": {
+                "exception": {
+                    "raised": "N",
+                    "caught": "N",
+                    "uncaught": "Y",
+                    "userUnhandled": "N"
+                }
+            }
+        },
+        "run - main.py": {
+            "adapter": "debugpy",
+            "configuration": {
+                "name": "run main.py",
+                "request": "launch",
+                "type": "python",
+                "cwd": "${workspaceRoot}",
+                "python": "${workspaceRoot}/venv/Scripts/python.exe",
+                "program": "${workspaceRoot}/src/basic_colormath2/main.py",
+                "stopOnEntry": false,
+                "console": "integratedTerminal"
+            },
+            "breakpoints": {
+                "exception": {
+                    "raised": "N",
+                    "uncaught": "",
+                    "userUnhandled": ""
+                }
+            }
+        },
+        "test": {
+            "adapter": "debugpy",
+            "configuration": {
+                "name": "run this test file",
+                "module": "pytest",
+                "type": "python",
+                "request": "launch",
+                "python": "${workspaceRoot}/venv/Scripts/python.exe",
+                "args": [
+                    "-q",
+                    "${file}"
+                ]
+            },
+            "breakpoints": {
+                "exception": {
+                    "raised": "N",
+                    "caught": "N",
+                    "uncaught": "Y",
+                    "userUnhandled": "N"
+                }
+            }
+        }
+    }
+}
