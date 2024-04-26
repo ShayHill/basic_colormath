@@ -5,9 +5,15 @@
 """
 
 import random
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 import pytest
+
+
+def pytest_assertrepr_compare(config: Any, op: str, left: str, right: str):
+    """See full error diffs"""
+    if op in ("==", "!="):
+        return ["{0} {1} {2}".format(left, op, right)]
 
 
 @pytest.fixture(scope="module", params=range(100))
