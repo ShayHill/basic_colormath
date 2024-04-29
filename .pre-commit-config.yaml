@@ -108,7 +108,7 @@ repos:
 #     - --accept-no-return-doc=n
 #     - --accept-no-yields-doc=n
 
-- repo: https://github.com/charliermarsh/ruff-pre-commit
+- repo: https://github.com/astral-sh/ruff-pre-commit
   # ignores
   # COM812 Trailing comma missing (does not agree with Black)
   # D203 1 blank line required before class docstring (incompatible with D211)
