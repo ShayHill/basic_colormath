@@ -1,3 +1,9 @@
+## 0.1.2 (2024-04-30)
+
+### Fix
+
+- restore correct project name
+
 ## 0.1.1 (2024-04-30)
 
 ### Refactor
