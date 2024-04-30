@@ -1,5 +1,5 @@
 [project]
-name = "basic_colormath2"
+name = "basic_colormath"
 version = "0.1.1"
 description = "Simple color conversion and perceptual (DeltaE CIE 2000) difference"
 authors = [{ name = "Shay Hill", email = "shay_public@hotmail.com" }]
