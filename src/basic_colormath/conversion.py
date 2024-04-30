@@ -14,6 +14,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+_MAX_8BIT = 255
+
 if TYPE_CHECKING:
     from basic_colormath.type_hints import HSL, HSV, RGB, Hex
 
@@ -104,7 +106,7 @@ def rgb_to_hsl(rgb: RGB) -> HSL:
 
     if var_max == var_min:
         sat = 0.0
-    elif lig <= 255:
+    elif lig <= _MAX_8BIT:
         sat = (var_max - var_min) / (0.01 * lig)
     else:
         sat = (var_max - var_min) / (5.1 - (0.01 * lig))
@@ -127,7 +129,7 @@ def hsl_to_rgb(hsl: HSL) -> RGB:
 _BIG_INT = 2**32 - 1
 
 
-def float_to_8bit_int(float_: float | int) -> int:
+def float_to_8bit_int(float_: float) -> int:
     """Convert a float between 0 and 255 to an int between 0 and 255.
 
     :param float_: a float in the closed interval [0 .. 255]
@@ -137,12 +139,12 @@ def float_to_8bit_int(float_: float | int) -> int:
     Convert color floats [0 .. 255] to ints [0 .. 255] without rounding, which "short
     changes" 0 and 255.
     """
-    if not 0 <= float_ <= 255:
+    if not 0 <= float_ <= _MAX_8BIT:
         msg = f"float argument must be in [0 .. 255], not `{float_}`"
         raise ValueError(msg)
     if isinstance(float_, int):
         return float_
-    high_int = int(float_ / 255 * _BIG_INT)
+    high_int = int(float_ / _MAX_8BIT * _BIG_INT)
     return high_int >> 24
 
 

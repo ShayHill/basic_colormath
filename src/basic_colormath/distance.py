@@ -23,6 +23,12 @@ http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html
 
 I've tried to preserve Bruce Lindbloom's naming conventions so you can follow along.
 
+Intermediate color formats are 3-tuples with the following ranges:
+
+    * RGB [0..255], [0..255], [0.255]
+    * XYZ [0.0, 1.0286], [0.0, 1.0822], [0.0, 1.178]
+    * Lab [0.0, 100], [-86.183, 98.235], [-107.865, 94.477]
+
 :author: Shay Hill
 :created: 2023-04-29
 """
@@ -46,6 +52,14 @@ _RGB_TO_XYZ = [
 ]
 
 
+# constants to "linearize" rgb values
+_XYZ_NORMALIZATION_THRESHOLD = 10.31475
+_XYZ_SML_VAL_DENOMINATOR = 3294.6
+_XYZ_LRG_VAL_OFFSET = 14.025
+_XYZ_LRG_VAL_DENOMINATOR = 269.025
+_XYZ_LRG_VAL_EXPONENT = 2.4
+
+
 def _rgb_to_xyz(rgb: RGB) -> _Triple:
     """RGB to XYZ conversion. Expects RGB values between 0 and 255.
 
@@ -54,14 +68,19 @@ def _rgb_to_xyz(rgb: RGB) -> _Triple:
 
     The standard rgb to xyz conversion scaled for [0, 255] color values.
     """
-    lin: list[float] = []
+    linear_channels: list[float] = []
     for channel in rgb:
-        if channel <= 10.31475:
-            lin.append(channel / 3294.6)
+        if channel <= _XYZ_NORMALIZATION_THRESHOLD:
+            linear_channel = channel / _XYZ_SML_VAL_DENOMINATOR
         else:
-            lin.append(((channel + 14.025) / 269.025) ** 2.4)
+            linear_channel = channel + _XYZ_LRG_VAL_OFFSET
+            linear_channel /= _XYZ_LRG_VAL_DENOMINATOR
+            linear_channel = pow(linear_channel, _XYZ_LRG_VAL_EXPONENT)
+        linear_channels.append(linear_channel)
 
-    result_matrix = [sum(x * y for x, y in zip(row, lin)) for row in _RGB_TO_XYZ]
+    result_matrix = [
+        sum(x * y for x, y in zip(row, linear_channels)) for row in _RGB_TO_XYZ
+    ]
     rgb_r, rgb_g, rgb_b = (max(c, 0) for c in result_matrix)
     return rgb_r, rgb_g, rgb_b
 
@@ -73,10 +92,6 @@ _16_116THS = 16 / 116
 # this will always be the illuminant when rgb is converted to xyz from an without
 # an illuminant argument
 _XYZ_ILLUM = (0.95047, 1.0, 1.08883)
-
-# RGB [0..255], [0..255], [0.255]
-# XYZ [0.0, 1.0286], [0.0, 1.0822], [0.0, 1.178]
-# Lab [0.0, 100], [-86.183, 98.235], [-107.865, 94.477]
 
 
 def _xyz_to_lab(xyz: _Triple) -> Lab:

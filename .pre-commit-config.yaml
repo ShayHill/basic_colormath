@@ -114,14 +114,16 @@ repos:
   # D203 1 blank line required before class docstring (incompatible with D211)
   # D213 multi line summary second line (incompatible with D212):
   # ISC003 Explicitly concatenated string should be implicitly concatenated
+  #
+  # N806 Variable in function should be lowercase
   rev: 'v0.4.2'
   hooks:
     - id: ruff
       exclude: "tests"
       args:
-      - --target-version=py39
+      - --target-version=py38
       - --select=ALL
-      - --ignore=COM812,D203,D213,ISC003
+      - --ignore=COM812,D203,D213,ISC003,N806
       # - --fix
 
 # reads pyproject.toml for additional config
