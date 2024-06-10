@@ -73,7 +73,7 @@ repos:
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.2
+  rev: v3.16.0
   hooks:
   - args:
     - --py38-plus
@@ -116,7 +116,7 @@ repos:
   # ISC003 Explicitly concatenated string should be implicitly concatenated
   #
   # N806 Variable in function should be lowercase
-  rev: 'v0.4.3'
+  rev: 'v0.4.8'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -128,6 +128,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.361
+  rev: v1.1.366
   hooks:
     - id: pyright
