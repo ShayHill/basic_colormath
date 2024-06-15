@@ -7,13 +7,17 @@ Everything I wanted to salvage from the [python-colormath](https://github.com/gt
 * Simple, one-way conversion to Lab
 * Some convenience functions for RGB tuples and 8-bit hex color strings
 
-Lab and LCh color formats are exciting because they can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab or LCh *with no additional information*, then the result will---of course---*not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
+Lab and LCh color formats are exciting because they can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab or LCh *with no additional information*, then the result will—of course—not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
 
-I've installed [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) on a lot of projects. The library does many interesting things, but most of what I wanted was perceptual color distance. This requires Lab colors, which have more parameters than an RGB tuple provides. Colormath didn't use those parameters, so the result didn't require the elaborate classes and methods provided by Colormath.
+I've installed [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) on a lot of projects. The library does many interesting things, but most of what I wanted was perceptual color distance. This requires Lab colors, which have more parameters than an RGB tuple provides. **Colormath didn't use those parameters**, so the result didn't require the elaborate classes and methods provided by Colormath.
 
-The color distance I provide here is DeltaE CIE 2000. Aside from (presumably) some specialized applications, this is the best of the multiple color distances provided by [python-colormath](https://github.com/gtaylor/python-colormath/tree/master). Tuples in, float out, and with a lot more speed. It doesn't use all of those expert parameters, but neither did Colormath. This is the same result you'll get from any of the online DeltaE calculators you're likely to find.
+The color distance I provide here is DeltaE CIE 2000. Aside from (presumably) some specialized applications, this is the best of the multiple color distances provided by [python-colormath](https://github.com/gtaylor/python-colormath/tree/master). Tuples in, float out, and with a lot more speed. It doesn't use all of those expert parameters, **but neither did Colormath**. This is the same result you'll get from any of the online DeltaE calculators you're likely to find.
 
 This library is more or less specialized for working with "upscaled" RGB tuples `([0, 255], [0, 255], [0, 255])`. Functions will take floats or ints in that range and return floats. If you want ints, use `float_tuple_to_8bit_int_tuple`. This is dramatically better int conversion than `int(float)` or `int(round(float))`, so use it insead of those.
+
+## don't miss
+
+CIE 2000 is *not* cummutative. That is, `get_delta_e(a, b)` is not the same as `get_delta_e(b, a)`. If this is important to you, you'll need to calculate both and take the min, max, or average.
 
 ## distance functions
 

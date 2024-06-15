@@ -116,7 +116,7 @@ repos:
   # ISC003 Explicitly concatenated string should be implicitly concatenated
   #
   # N806 Variable in function should be lowercase
-  rev: 'v0.4.8'
+  rev: 'v0.4.9'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -128,6 +128,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.366
+  rev: v1.1.367
   hooks:
     - id: pyright
