@@ -126,6 +126,7 @@ def hsl_to_rgb(hsl: HSL) -> RGB:
     return _sort_channels_given_hue(hue, (min_, mid_p + min_, max_p + min_))
 
 
+# A large integer that won't break most systems. Used for float_to_8bit_int.
 _BIG_INT = 2**32 - 1
 
 
@@ -133,7 +134,7 @@ def float_to_8bit_int(float_: float) -> int:
     """Convert a float between 0 and 255 to an int between 0 and 255.
 
     :param float_: a float in the closed interval [0 .. 255]
-    :return: an interval in the closed interval [0 .. 255]
+    :return: an int in the closed interval [0 .. 255]
     :raise ValueError: if float_ is not in the closed interval [0 .. 255]
 
     Convert color floats [0 .. 255] to ints [0 .. 255] without rounding, which "short
@@ -142,17 +143,17 @@ def float_to_8bit_int(float_: float) -> int:
     if not 0 <= float_ <= _MAX_8BIT:
         msg = f"float argument must be in [0 .. 255], not `{float_}`"
         raise ValueError(msg)
-    if isinstance(float_, int):
-        return float_
-    high_int = int(float_ / _MAX_8BIT * _BIG_INT)
-    return high_int >> 24
+    if float_ % 1:
+        high_int = int(float_ / _MAX_8BIT * _BIG_INT)
+        return high_int >> 24
+    return int(float_)
 
 
 def float_tuple_to_8bit_int_tuple(rgb: RGB) -> tuple[int, int, int]:
     """Convert an rgb float tuple to an rgb int tuple.
 
     :param rgb: a tuple of floats in the closed interval [0 .. 255]
-    :return: a tuple of ints in the closed interval [0 .. 255]
+    :return: a tuple of ints in the clossdffed interval [0 .. 255]
     """
     red, grn, blu = (float_to_8bit_int(c) for c in rgb)
     return red, grn, blu
