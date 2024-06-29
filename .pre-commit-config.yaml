@@ -44,7 +44,7 @@ repos:
         # files: .pre-commit-config.yaml
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.10.0
+  rev: v1.10.1
   hooks:
   - id: mypy
     name: mypy
@@ -116,7 +116,7 @@ repos:
   # ISC003 Explicitly concatenated string should be implicitly concatenated
   #
   # N806 Variable in function should be lowercase
-  rev: 'v0.4.9'
+  rev: 'v0.5.0'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -128,6 +128,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.367
+  rev: v1.1.369
   hooks:
     - id: pyright
