@@ -24,7 +24,7 @@ from basic_colormath.distance import (
 )
 
 
-def _patch_asscalar(a: npt.NDArray[np.float_]) -> float:
+def _patch_asscalar(a: npt.NDArray[np.float64]) -> float:
     """Alias for np.item(). Patch np.asscalar for colormath.
 
     :param a: numpy array

@@ -108,7 +108,7 @@ Sadly, [python-colormath](https://github.com/gtaylor/python-colormath/tree/maste
     import numpy as np
     import numpy.typing as npt
 
-    def _patch_asscalar(a: npt.NDArray[np.float_]) -> float:
+    def _patch_asscalar(a: npt.NDArray[np.float64]) -> float:
         """Alias for np.item(). Patch np.asscalar for colormath.
 
         :param a: numpy array
