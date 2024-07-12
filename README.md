@@ -39,7 +39,7 @@ CIE 2000 is *not* cummutative. That is, `get_delta_e(a, b)` is not the same as `
 
     get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
         # Calculate the Delta E (CIE 2000) between two hex colors.
-        # Takes and returns hex colorstrings.
+        # Takes hex colorstrings.
 
     get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
         # Calculate the Delta E (CIE2000) of two Lab colors.
