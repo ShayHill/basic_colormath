@@ -7,7 +7,7 @@ Everything I wanted to salvage from the [python-colormath](https://github.com/gt
 * Simple, one-way conversion to Lab
 * Some convenience functions for RGB tuples and 8-bit hex color strings
 
-Lab and LCh color formats are exciting because they can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab or LCh *with no additional information*, then the result will—of course—not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
+Lab and LCh color formats are exciting because they can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab or LCh *with no additional information*, then the result will—of course—*not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
 
 I've installed [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) on a lot of projects. The library does many interesting things, but most of what I wanted was perceptual color distance. This requires Lab colors, which have more parameters than an RGB tuple provides. **Colormath didn't use those parameters**, so the result didn't require the elaborate classes and methods provided by Colormath.
 
