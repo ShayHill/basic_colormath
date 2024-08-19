@@ -133,16 +133,14 @@ _BIG_INT = 2**32 - 1
 def float_to_8bit_int(float_: float) -> int:
     """Convert a float between 0 and 255 to an int between 0 and 255.
 
-    :param float_: a float in the closed interval [0 .. 255]
+    :param float_: a float in the closed interval [0 .. 255]. Values outside this
+        range will be clipped.
     :return: an int in the closed interval [0 .. 255]
-    :raise ValueError: if float_ is not in the closed interval [0 .. 255]
 
     Convert color floats [0 .. 255] to ints [0 .. 255] without rounding, which "short
     changes" 0 and 255.
     """
-    if not 0 <= float_ <= _MAX_8BIT:
-        msg = f"float argument must be in [0 .. 255], not `{float_}`"
-        raise ValueError(msg)
+    float_ = min(_MAX_8BIT, max(0, float_))
     if float_ % 1:
         high_int = int(float_ / _MAX_8BIT * _BIG_INT)
         return high_int >> 24
