@@ -44,7 +44,7 @@ repos:
         # files: .pre-commit-config.yaml
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.11.0
+  rev: v1.11.1
   hooks:
   - id: mypy
     name: mypy
@@ -66,14 +66,14 @@ repos:
     args: ["--profile", "black", "--filter-files", "--combine-as", "honor--noqa"]
 
 - repo: https://github.com/psf/black
-  rev: 24.4.2
+  rev: 24.8.0
   hooks:
   - id: black
     language_version: python3.8
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.16.0
+  rev: v3.17.0
   hooks:
   - args:
     - --py38-plus
@@ -116,7 +116,7 @@ repos:
   # ISC003 Explicitly concatenated string should be implicitly concatenated
   #
   # N806 Variable in function should be lowercase
-  rev: 'v0.5.4'
+  rev: 'v0.6.1'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -128,6 +128,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.372
+  rev: v1.1.376
   hooks:
     - id: pyright
