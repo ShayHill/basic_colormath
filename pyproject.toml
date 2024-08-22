@@ -9,6 +9,7 @@ requires-python = ">=3.8"
 dependencies = []
 
 [project.optional-dependencies]
+vectorize = ["numpy"]
 dev = ["commitizen", "colormath", "numpy", "pre-commit", "pytest", "tox"]
 
 [build-system]
