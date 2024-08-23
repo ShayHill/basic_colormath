@@ -99,7 +99,29 @@ Converts to other simple formats.
     float_to_8bit_int(float_: float | int) -> int:
 
     float_tuple_to_8bit_int_tuple(rgb: RGB) -> tuple[int, int, int]:
+    
 
+## vectorized functions
+
+If you have numpy installed in your env, basic_colormath will provide vectorized versions of most functions.
+
+| Function                      | Vectorized Function           |
+| ----------------------------- | ----------------------------- |
+| float_to_8bit_int             | floats_to_uint8               |
+| get_delta_e                   | get_deltas_e                  |
+| get_delta_e_hex               | get_deltas_e_hex              |
+| get_delta_e_lab               | get_deltas_e_lab              |
+| get_euclidean                 | get_euclideans                |
+| get_euclidean_hex             | get_euclideans_hex            |
+| get_sqeuclidean               | get_sqeuclideans              |
+| get_sqeuclidean_hex           | get_sqeuclideans_hex          |
+| hex_to_rgb                    | hexs_to_rgb                   |
+| hsl_to_rgb                    | hsls_to_rgb                   |
+| hsv_to_rgb                    | hsvs_to_rgb                   |
+| rgb_to_hex                    | rgbs_to_hex                   |
+| rgb_to_hsl                    | rgbs_to_hsl                   |
+| rgb_to_hsv                    | rgbs_to_hsv                   |
+| rgb_to_lab                    | rgbs_to_lab                   |
 
 ## If you need more
 
