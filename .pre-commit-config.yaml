@@ -43,22 +43,6 @@ repos:
     # - id: sort-simple-yaml
         # files: .pre-commit-config.yaml
 
-- repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.11.1
-  hooks:
-  - id: mypy
-    name: mypy
-    language: python
-    language_version: python 3.12
-    types: [python]
-    require_serial: true
-    verbose: true
-    additional_dependencies: ['types-requests']
-    exclude: src/basic_colormath/vec_*
-    # args:
-    # - --ignore-missing-imports
-    # files: ^(src/|tests/)
-
 - repo: https://github.com/PyCQA/isort
   rev: 5.13.2
   hooks:
@@ -118,6 +102,7 @@ repos:
   # N806 Variable in function should be lowercase
   # N802 function name should be lowercase
   # N803 argument name should be lowercase
+  # ICN001 import numpy as np
   rev: 'v0.6.2'
   hooks:
     - id: ruff
@@ -125,7 +110,7 @@ repos:
       args:
       - --target-version=py38
       - --select=ALL
-      - --ignore=COM812,D203,D213,ISC003,N806,N802,N803
+      - --ignore=COM812,D203,D213,ISC003,N806,N802,N803,ICN001
       # - --fix
 
 # reads pyproject.toml for additional config
