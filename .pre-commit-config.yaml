@@ -116,6 +116,8 @@ repos:
   # ISC003 Explicitly concatenated string should be implicitly concatenated
   #
   # N806 Variable in function should be lowercase
+  # N802 function name should be lowercase
+  # N803 argument name should be lowercase
   rev: 'v0.6.2'
   hooks:
     - id: ruff
@@ -123,7 +125,7 @@ repos:
       args:
       - --target-version=py38
       - --select=ALL
-      - --ignore=COM812,D203,D213,ISC003,N806
+      - --ignore=COM812,D203,D213,ISC003,N806,N802,N803
       # - --fix
 
 # reads pyproject.toml for additional config

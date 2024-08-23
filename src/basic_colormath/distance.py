@@ -51,7 +51,6 @@ _RGB_TO_XYZ = [
     [0.0193324, 0.119193, 0.950444],
 ]
 
-
 # constants to "linearize" rgb values
 _XYZ_NORMALIZATION_THRESHOLD = 10.31475
 _XYZ_SML_VAL_DENOMINATOR = 3294.6
@@ -89,8 +88,8 @@ _CIE_E = 216 / 24389
 _1_3RD = 1 / 3
 _16_116THS = 16 / 116
 
-# this will always be the illuminant when rgb is converted to xyz from an without
-# an illuminant argument
+# this will always be the illuminant when rgb is converted to xyz without an
+# illuminant argument
 _XYZ_ILLUM = (0.95047, 1.0, 1.08883)
 
 
@@ -100,8 +99,6 @@ def _xyz_to_lab(xyz: _Triple) -> Lab:
     :param xyz: XYZ color tuple
     :return: Lab color tuple
     """
-    # this will always be the illuminant when rgb is converted to xyz from an without
-    # an illuminant argument
     scaled_xyz = [c / y for c, y in zip(xyz, _XYZ_ILLUM)]
     for i, channel in enumerate(scaled_xyz):
         if channel > _CIE_E:
@@ -222,7 +219,7 @@ def get_sqeuclidean(rgb_a: RGB, rgb_b: RGB) -> float:
     :param rgb_b: The second RGB color.
     :return: The squared Euclidean distance between the two RGB colors.
     """
-    return sum((a - b) ** 2 for a, b in zip(rgb_a, rgb_b))
+    return sum((a - b) ** 2 for a, b in zip(map(float, rgb_a), map(float, rgb_b)))
 
 
 def get_sqeuclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
