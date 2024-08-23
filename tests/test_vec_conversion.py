@@ -12,7 +12,7 @@ from basic_colormath.conversion import (
     float_tuple_to_8bit_int_tuple,
     rgb_to_hex,
     rgb_to_hsl,
-    rgb_to_hsv,
+    rgb_to_hsv, hex_to_rgb
 )
 from basic_colormath.vec_conversion import (
     _get_hues_from_rgbs,
@@ -110,6 +110,26 @@ class TestRgbsToHexs:
 
 
 class TestHexsToRgbs:
+    def test_match_single(self):
+        """Match result of single conversion mapped over array."""
+        hexs = np.array(
+            [
+                "#000000",
+                "#ff0000",
+                "#ffff00",
+                "#00ff00",
+                "#00ffff",
+                "#0000ff",
+                "#ff00ff",
+                "#ffffff",
+            ],
+            dtype=np.str_,
+        )
+        rgbs = hexs_to_rgb(hexs)
+        for ixs in np.ndindex(hexs.shape):
+            rgb = hex_to_rgb(hexs[ixs])
+            np.testing.assert_array_almost_equal(rgbs[ixs], rgb)
+
     def test_reflection(self):
         """rgb to hex to rgb
 

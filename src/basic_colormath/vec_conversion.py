@@ -26,7 +26,8 @@ def _get_hues_from_rgbs(
 ) -> _FloatArray:
     """Get the hue values in degrees from an array of rgb tuples.
 
-    :param rgbs: An array (...,3) of red, green, and blue values [0, 255].
+    :param rgbs: an array (..., 3) of red, green, and blue values
+        [0, 255], [0, 255], [0, 255]
     :param mins: (..., 1) pre-calculated minimum values in the rgb tuples.
     :param maxs: (..., 1) pre-calculated maximum values in the rgb tuples.
     :return: (..., 1) The hue values in degrees, [0, 360).
@@ -196,8 +197,7 @@ def rgbs_to_hex(rgbs: _NumberArray) -> npt.NDArray[np.str_]:
     :return: an array (..., 1) of hex strings. e.g. '#ff0000'
     """
     rgbs = floats_to_uint8(rgbs)
-    hexs = np.apply_along_axis(_rgb_to_hex, -1, rgbs)
-    return hexs[..., np.newaxis]
+    return np.apply_along_axis(_rgb_to_hex, -1, rgbs)
 
 
 def _hex_to_rgb(hex_: npt.NDArray[np.str_]) -> tuple[int, int, int]:
@@ -216,4 +216,4 @@ def hexs_to_rgb(hexs: npt.NDArray[np.str_]) -> _FloatArray:
     :return: an array (..., 3) of red, green, and blue values
         [0, 255], [0, 255], [0, 255]
     """
-    return np.apply_along_axis(_hex_to_rgb, -1, hexs)
+    return np.apply_along_axis(_hex_to_rgb, -1, hexs[..., np.newaxis])

@@ -19,8 +19,8 @@ from colormath.color_objects import HSLColor, HSVColor, sRGBColor  # type: ignor
 
 from basic_colormath.conversion import (
     _get_hue_from_rgb,
-    float_tuple_to_8bit_int_tuple,
     float_to_8bit_int,
+    float_tuple_to_8bit_int_tuple,
     hex_to_rgb,
     hsl_to_rgb,
     hsv_to_rgb,
@@ -28,8 +28,6 @@ from basic_colormath.conversion import (
     rgb_to_hsl,
     rgb_to_hsv,
 )
-
-
 
 
 def get_hue(rgb: Tuple[float, float, float]) -> float:
@@ -56,6 +54,7 @@ class TestIntConversion:
     def test_values_above_255_are_clipped(self) -> None:
         """Clip input values outside [0..255]."""
         assert float_to_8bit_int(256) == 255
+
 
 class TestHue:
     def test_upscaled(self) -> None:

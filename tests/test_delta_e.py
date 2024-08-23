@@ -112,13 +112,17 @@ def _compare_speed():
 
     beg = time.time()
     for rgb_a, rgb_b in zip(rgb_as, rgb_bs):
-        _ = _colormath_delta_e(rgb_a, rgb_b)
+        ra, ga, ba = rgb_a
+        rb, gb, bb = rgb_b
+        _ = _colormath_delta_e((ra, ga, ba), (rb, gb, bb))
     end = time.time()
     colormath_time = end - beg
     print(f"colormath: {colormath_time}")
     beg = time.time()
     for rgb_a, rgb_b in zip(rgb_as, rgb_bs):
-        _ = get_delta_e(rgb_a, rgb_b)
+        ra, ga, ba = rgb_a
+        rb, gb, bb = rgb_b
+        _ = get_delta_e((ra, ga, ba), (rb, gb, bb))
     end = time.time()
     our_time = end - beg
     print(f"delta_e: {our_time}")

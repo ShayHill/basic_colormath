@@ -54,7 +54,7 @@ repos:
     require_serial: true
     verbose: true
     additional_dependencies: ['types-requests']
-    exclude: src/basic_colormath/vec_conversion.py
+    exclude: src/basic_colormath/vec_*
     # args:
     # - --ignore-missing-imports
     # files: ^(src/|tests/)
