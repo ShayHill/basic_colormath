@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import Any, TypeVar
+from typing import Any, TypeVar, Union
 
 import numpy as np
 from numpy import typing as npt
@@ -15,7 +15,7 @@ from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
 
 _FloatArray = npt.NDArray[np.float64]
 _IntArray = npt.NDArray[np.int64]
-_NumberArray = _FloatArray | _IntArray | npt.NDArray[np.uint8]
+_NumberArray = Union[_FloatArray, _IntArray, npt.NDArray[np.uint8]]
 _TArray = TypeVar("_TArray", bound=npt.NDArray[Any])
 
 _MAX_8BIT = 255
@@ -156,7 +156,7 @@ def hsls_to_rgb(hsls: _FloatArray) -> _FloatArray:
 
 
 # A large integer that won't break most systems. Used for float_to_8bit_int.
-_BIG_INT = 2**32 - 1
+_BIG_INT: int = 2**32 - 1
 
 
 def floats_to_uint8(rgbs: _NumberArray) -> npt.NDArray[np.uint8]:
@@ -175,7 +175,7 @@ def floats_to_uint8(rgbs: _NumberArray) -> npt.NDArray[np.uint8]:
     """
     if rgbs.dtype is np.uint8:
         return rgbs.astype(np.uint8)
-    big_ints = (np.clip(0, 255, rgbs) / _MAX_8BIT * _BIG_INT).astype(int)
+    big_ints = (np.clip(rgbs, 0, 255) / 255 * _BIG_INT).astype(np.uint32)
     return (big_ints >> 24).astype(np.uint8)
 
 

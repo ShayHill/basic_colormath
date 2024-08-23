@@ -5,6 +5,7 @@
 """
 
 import math
+from typing import Union
 
 import numpy as np
 from numpy import typing as npt
@@ -14,7 +15,7 @@ from basic_colormath.vec_conversion import hexs_to_rgb
 _Uint8Array = npt.NDArray[np.uint8]
 _FloatArray = npt.NDArray[np.float64]
 _IntArray = npt.NDArray[np.int64]
-_NumberArray = _FloatArray | _IntArray | npt.NDArray[np.uint8]
+_NumberArray = Union[_FloatArray, _IntArray, npt.NDArray[np.uint8]]
 _StrArray = npt.NDArray[np.str_]
 
 _RGB_TO_XYZ = [
