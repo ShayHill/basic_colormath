@@ -99,7 +99,7 @@ Converts to other simple formats.
     float_to_8bit_int(float_: float | int) -> int:
 
     float_tuple_to_8bit_int_tuple(rgb: RGB) -> tuple[int, int, int]:
-    
+
 
 ## vectorized functions
 
