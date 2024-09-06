@@ -1,11 +1,37 @@
 """Vectorized delta_e cielab 2000 distance calculation.
 
+Vectorized versions of the delta_e cielab 2000 distance calculation, squared
+Euclidean, and Euclidean distances.
+
+Proximity and cross-proximity matrices for delta_e cielab 2000, squared Euclidean,
+and Euclidean distances.
+
+# Proximity Matrix
+
+for [a, b, c] in colors:
+
+f(a, a), f(a, b), f(a, c)
+f(b, a), f(b, b), f(b, c)
+f(c, a), f(c, b), f(c, c)
+
+# Cross-Proximity Matrix
+
+for [a, b, c, d] in colors_a:
+for [x, y, z] in colors_b:
+
+f(a, x), f(a, y), f(a, z)
+f(b, x), f(b, y), f(b, z)
+f(c, x), f(c, y), f(c, z)
+f(d, x), f(d, y), f(d, z)
+
 :author: Shay Hill
 :created: 2024-08-22
 """
 
+from __future__ import annotations
+
 import math
-from typing import Union
+from typing import Callable, TypeVar, Union, cast
 
 import numpy as np
 from numpy import typing as npt
@@ -299,3 +325,162 @@ def get_deltas_e_hex(hexs_a: _StrArray, hexs_b: _StrArray) -> _FloatArray:
     labs_a = hexs_to_lab(hexs_a)
     labs_b = hexs_to_lab(hexs_b)
     return get_deltas_e_lab(labs_a, labs_b)
+
+
+# ===============================================================================
+#   Proximity and Cross-Proximity Matrices
+# ===============================================================================
+
+
+_TColors = TypeVar("_TColors", _FloatArray, _NumberArray)
+
+
+def _build_proximity_matrix(
+    colors: _TColors, func: Callable[[_TColors, _TColors], _FloatArray]
+) -> _FloatArray:
+    """Build a proximity matrix from a list of colors.
+
+    :param colors: an array (n, 3) of Lab or rgb colors
+    :param func: a commutative function that calculates the proximity of two Lab
+        colors. It is assumed that identical colors have a proximity of 0.
+    :return: an array (n, n) of proximity values between every pair of Lab colors
+
+    The proximity matrix is symmetric.
+    """
+    n = len(colors)
+    rows = cast(_TColors, np.repeat(colors[:, np.newaxis, :], n, axis=1))
+    cols = cast(_TColors, np.repeat(colors[np.newaxis, :, :], n, axis=0))
+    proximity_matrix = np.zeros((n, n))
+    ut = np.triu_indices(n, k=1)
+    lt = (ut[1], ut[0])
+    proximity_matrix[ut] = func(cols[ut], rows[ut])
+    proximity_matrix[lt] = proximity_matrix[ut]
+    return proximity_matrix
+
+
+def _build_cross_proximity_matrix(
+    colors_a: _TColors,
+    colors_b: _TColors,
+    func: Callable[[_TColors, _TColors], _FloatArray],
+) -> _FloatArray:
+    """Build a cross-proximity matrix from two lists of colors.
+
+    :param colors_a: an array (n, 3) of Lab or rgb colors
+    :param colors_b: an array (n, 3) of Lab or rgb colors
+    :param func: a function that calculates the proximity of two Lab colors
+    :return: an array (n, m) of proximity values between every pair (n_i, m_j) of Lab
+        colors.
+    """
+    rows = cast(_TColors, np.repeat(colors_a[:, np.newaxis, :], len(colors_b), axis=1))
+    cols = cast(_TColors, np.repeat(colors_b[np.newaxis, :, :], len(colors_a), axis=0))
+    return func(rows, cols)
+
+
+def get_delta_e_matrix_lab(
+    labs_a: _FloatArray, labs_b: _FloatArray | None = None
+) -> _FloatArray:
+    """Build a Delta E (CIE2000) matrix from a list of Lab colors.
+
+    :param labs_a: an array (n, 3) of Lab colors
+    :param labs_b: an optional array (m, 3) of Lab colors
+    :return: an array (n, n) or (n, m) of Delta E (CIE2000) distances between every
+        pairs of Lab colors.
+
+    If colors_b is None, the matrix is every distance between the colors in colors_a.
+
+    If colors_b is not None, the matrix is the distance between every pair of colors
+    (n_i, m_j) in colors_a and colors_b.
+    """
+    if labs_b is None:
+        return _build_proximity_matrix(labs_a, get_deltas_e_lab)
+    return _build_cross_proximity_matrix(labs_a, labs_b, get_deltas_e_lab)
+
+
+def get_delta_e_matrix(
+    rgbs_a: _NumberArray, rgbs_b: _NumberArray | None = None
+) -> _FloatArray:
+    """Build a Delta E (CIE2000) matrix from a list of RGB colors.
+
+    :param rgbs_a: an array (n, 3) of red, green, and blue values
+        [0, 255], [0, 255], [0, 255]
+    :param rgbs_b: an optional array (m, 3) of red, green, and blue values
+        [0, 255], [0, 255], [0, 255]
+    :return: an array (n, n) or (n, m) of Delta E (CIE2000) distances between pairs.
+    """
+    labs_a = rgbs_to_lab(rgbs_a)
+    labs_b = None if rgbs_b is None else rgbs_to_lab(rgbs_b)
+    return get_delta_e_matrix_lab(labs_a, labs_b)
+
+
+def get_delta_e_matrix_hex(
+    hexs_a: _StrArray, hexs_b: _StrArray | None = None
+) -> _FloatArray:
+    """Build a Delta E (CIE2000) matrix from a list of HEX colors.
+
+    :param hexs_a: an array (n,) of hex colors, e.g. '#ff0000'
+    :param hexs_b: an optional array (m,) of hex colors
+    :return: an array (n, n) or (n, m) of Delta E (CIE2000) distances between pairs.
+    """
+    labs_a = hexs_to_lab(hexs_a)
+    labs_b = None if hexs_b is None else hexs_to_lab(hexs_b)
+    return get_delta_e_matrix_lab(labs_a, labs_b)
+
+
+def get_sqeuclidean_matrix(
+    rgbs_a: _NumberArray, rgbs_b: _NumberArray | None = None
+) -> _FloatArray:
+    """Build a squared Euclidean distance matrix from a list of RGB colors.
+
+    :param rgbs_a: an array (n, 3) of red, green, and blue values
+        [0, 255], [0, 255], [0, 255]
+    :param rgbs_b: an optional array (m, 3) of red, green, and blue values
+        [0, 255], [0, 255], [0, 255]
+    :return: an array (n, n) or (n, m) of squared Euclidean distances between pairs.
+    """
+    if rgbs_b is None:
+        return _build_proximity_matrix(rgbs_a, get_sqeuclideans)
+    return _build_cross_proximity_matrix(rgbs_a, rgbs_b, get_sqeuclideans)
+
+
+def get_sqeuclidean_matrix_hex(
+    hexs_a: _StrArray, hexs_b: _StrArray | None = None
+) -> _FloatArray:
+    """Build a squared Euclidean distance matrix from a list of HEX colors.
+
+    :param hexs_a: an array (n,) of hex colors, e.g. '#ff0000'
+    :param hexs_b: an optional array (m,) of hex colors
+    :return: an array (n, n) or (n, m) of squared Euclidean distances between pairs.
+    """
+    rgbs_a = hexs_to_rgb(hexs_a)
+    rgbs_b = None if hexs_b is None else hexs_to_rgb(hexs_b)
+    return get_sqeuclidean_matrix(rgbs_a, rgbs_b)
+
+
+def get_euclidean_matrix(
+    rgbs_a: _NumberArray, rgbs_b: _NumberArray | None = None
+) -> _FloatArray:
+    """Build a Euclidean distance matrix from a list of RGB colors.
+
+    :param rgbs_a: an array (n, 3) of red, green, and blue values
+        [0, 255], [0, 255], [0, 255]
+    :param rgbs_b: an optional array (m, 3) of red, green, and blue values
+        [0, 255], [0, 255], [0, 255]
+    :return: an array (n, n) or (n, m) of squared Euclidean distances between pairs.
+    """
+    if rgbs_b is None:
+        return _build_proximity_matrix(rgbs_a, get_euclideans)
+    return _build_cross_proximity_matrix(rgbs_a, rgbs_b, get_euclideans)
+
+
+def get_euclidean_matrix_hex(
+    hexs_a: _StrArray, hexs_b: _StrArray | None = None
+) -> _FloatArray:
+    """Build a Euclidean distance matrix from a list of HEX colors.
+
+    :param hexs_a: an array (n,) of hex colors, e.g. '#ff0000'
+    :param hexs_b: an optional array (m,) of hex colors
+    :return: an array (n, n) or (n, m) of squared Euclidean distances between pairs.
+    """
+    rgbs_a = hexs_to_rgb(hexs_a)
+    rgbs_b = None if hexs_b is None else hexs_to_rgb(hexs_b)
+    return get_euclidean_matrix(rgbs_a, rgbs_b)

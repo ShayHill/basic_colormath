@@ -6,18 +6,16 @@ Everything I wanted to salvage from the [python-colormath](https://github.com/gt
 * Conversion between RGB, HSV, HSL, and 8-bit hex colors
 * Simple, one-way conversion to Lab
 * Some convenience functions for RGB tuples and 8-bit hex color strings
+* Vectorized functions for numpy arrays
+* Proximity and cross-proximity (rectangular) matrices for numpy arrays
 
-Lab and LCh color formats are exciting because they can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab or LCh *with no additional information*, then the result will—of course—*not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
+Lab color format is exciting because it can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab *with no additional information*, then the result will—of course—*not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
 
 I've installed [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) on a lot of projects. The library does many interesting things, but most of what I wanted was perceptual color distance. This requires Lab colors, which have more parameters than an RGB tuple provides. **Colormath didn't use those parameters**, so the result didn't require the elaborate classes and methods provided by Colormath.
 
 The color distance I provide here is DeltaE CIE 2000. Aside from (presumably) some specialized applications, this is the best of the multiple color distances provided by [python-colormath](https://github.com/gtaylor/python-colormath/tree/master). Tuples in, float out, and with a lot more speed. It doesn't use all of those expert parameters, **but neither did Colormath**. This is the same result you'll get from any of the online DeltaE calculators you're likely to find.
 
 This library is more or less specialized for working with "upscaled" RGB tuples `([0, 255], [0, 255], [0, 255])`. Functions will take floats or ints in that range and return floats. If you want ints, use `float_tuple_to_8bit_int_tuple`. This is dramatically better int conversion than `int(float)` or `int(round(float))`, so use it insead of those.
-
-## don't miss
-
-CIE 2000 is *not* cummutative. That is, `get_delta_e(a, b)` is not the same as `get_delta_e(b, a)`. If this is important to you, you'll need to calculate both and take the min, max, or average.
 
 ## distance functions
 
@@ -91,8 +89,10 @@ Converts to other simple formats.
         :return: rgb tuple ([0, 255], [0, 255], [0, 255])
 
     scale_hex(hex_: Hex, scalar: float)-> Hex
+        # Scale a hex color by a scalar.
 
     mix_hex(*hex_args: Hex, ratio: _Ratio=None) -> Hex
+        # Mix any number of hex colors.
 
 ## better float to int conversion
 
@@ -103,25 +103,35 @@ Converts to other simple formats.
 
 ## vectorized functions
 
-If you have numpy installed in your env, basic_colormath will provide vectorized versions of most functions.
+If you have numpy installed in your env, basic_colormath will provide vectorized versions of most functions along with proximity matrices and cross-proximity matrices.
 
-| Function                      | Vectorized Function           |
-| ----------------------------- | ----------------------------- |
-| float_to_8bit_int             | floats_to_uint8               |
-| get_delta_e                   | get_deltas_e                  |
-| get_delta_e_hex               | get_deltas_e_hex              |
-| get_delta_e_lab               | get_deltas_e_lab              |
-| get_euclidean                 | get_euclideans                |
-| get_euclidean_hex             | get_euclideans_hex            |
-| get_sqeuclidean               | get_sqeuclideans              |
-| get_sqeuclidean_hex           | get_sqeuclideans_hex          |
-| hex_to_rgb                    | hexs_to_rgb                   |
-| hsl_to_rgb                    | hsls_to_rgb                   |
-| hsv_to_rgb                    | hsvs_to_rgb                   |
-| rgb_to_hex                    | rgbs_to_hex                   |
-| rgb_to_hsl                    | rgbs_to_hsl                   |
-| rgb_to_hsv                    | rgbs_to_hsv                   |
-| rgb_to_lab                    | rgbs_to_lab                   |
+| Function                      | Vectorized Function           | (Cross-) Proximity Matrix  |
+| ----------------------------- | ----------------------------- | -------------------------- |
+| float_to_8bit_int             | floats_to_uint8               |                            |
+| get_delta_e                   | get_deltas_e                  | get_delta_e_matrix         |
+| get_delta_e_hex               | get_deltas_e_hex              | get_delta_e_matrix_hex     |
+| get_delta_e_lab               | get_deltas_e_lab              | get_delta_e_matrix_lab     |
+| get_euclidean                 | get_euclideans                | get_euclidean_matrix       |
+| get_euclidean_hex             | get_euclideans_hex            | get_euclidean_matrix_hex   |
+| get_sqeuclidean               | get_sqeuclideans              | get_squeclidean_matrix     |
+| get_sqeuclidean_hex           | get_sqeuclideans_hex          | get_sqeuclinean_matrix_hex |
+| hex_to_rgb                    | hexs_to_rgb                   |                            |
+| hsl_to_rgb                    | hsls_to_rgb                   |                            |
+| hsv_to_rgb                    | hsvs_to_rgb                   |                            |
+| rgb_to_hex                    | rgbs_to_hex                   |                            |
+| rgb_to_hsl                    | rgbs_to_hsl                   |                            |
+| rgb_to_hsv                    | rgbs_to_hsv                   |                            |
+| rgb_to_lab                    | rgbs_to_lab                   |                            |
+| mix_hex                       |                               |                            |
+| mix_rgb                       |                               |                            |
+| scale_hex                     |                               |                            |
+| scale_rgb                     |                               |                            |
+
+## proximity matrices
+
+(Cross-)proximity matrix functions take a (-1, 3) array of color values or (-1,) array of hex color strings and return a proximity matrix. This is a square matrix with the same number of rows and columns as the number of colors provided. The value at row `i` and column `j` is the distance between the color at index `i` and the color at index `j`. The diagonal is always zero.
+
+An optional second argument creates a *cross-proximity* matrix. This is a matrix with the same number of rows as the first argument and the same number of columns as the second argument. The value at row `i` and column `j` is the distance between the color at index `i` in the first argument and the color at index `j` in the second argument.
 
 ## If you need more
 
