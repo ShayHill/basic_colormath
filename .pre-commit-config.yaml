@@ -6,7 +6,7 @@ exclude: "tests"
 repos:
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0
+  rev: v5.0.0
   hooks:
     - id: check-added-large-files
     - id: check-ast
@@ -50,14 +50,14 @@ repos:
     args: ["--profile", "black", "--filter-files", "--combine-as", "honor--noqa"]
 
 - repo: https://github.com/psf/black
-  rev: 24.8.0
+  rev: 24.10.0
   hooks:
   - id: black
     language_version: python3.8
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.17.0
+  rev: v3.18.0
   hooks:
   - args:
     - --py38-plus
@@ -103,7 +103,7 @@ repos:
   # N802 function name should be lowercase
   # N803 argument name should be lowercase
   # ICN001 import numpy as np
-  rev: 'v0.6.3'
+  rev: 'v0.6.9'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -115,6 +115,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.378
+  rev: v1.1.384
   hooks:
     - id: pyright
