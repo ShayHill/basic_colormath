@@ -17,10 +17,10 @@ from typing import TYPE_CHECKING
 _MAX_8BIT = 255
 
 if TYPE_CHECKING:
-    from basic_colormath.type_hints import Hsl, Hsv, Rgb, Hex
+    from basic_colormath.type_hints import Hex, Hsl, HslLike, Hsv, HsvLike, Rgb, RgbLike
 
 
-def _get_hue_from_rgb(rgb: Rgb, min_: float, max_: float) -> float:
+def _get_hue_from_rgb(rgb: RgbLike, min_: float, max_: float) -> float:
     """Get the hue value in degrees from an rgb tuple.
 
     :param rgb: A tuple of red, green, and blue values, ([0, 255], [0, 255], [0, 255]).
@@ -38,7 +38,7 @@ def _get_hue_from_rgb(rgb: Rgb, min_: float, max_: float) -> float:
     return 60 * ((red - grn) / (max_ - min_)) + 240
 
 
-def _sort_channels_given_hue(hue: float, min_mid_max: Rgb) -> Rgb:
+def _sort_channels_given_hue(hue: float, min_mid_max: RgbLike) -> Rgb:
     """Sort the channels of an rgb tuple given a hue value.
 
     :param hue: The hue value in degrees, [0, 360).
@@ -58,11 +58,14 @@ def _sort_channels_given_hue(hue: float, min_mid_max: Rgb) -> Rgb:
         4: (1, 0, 2),
         5: (2, 0, 1),
     }
-    red, grn, blu = (min_mid_max[i] for i in sextant2order[int(hue // 60)])
+    channel_a, channel_b, channel_c = min_mid_max
+    red, grn, blu = (
+        [channel_a, channel_b, channel_c][i] for i in sextant2order[int(hue // 60)]
+    )
     return red, grn, blu
 
 
-def rgb_to_hsv(rgb: Rgb) -> Hsv:
+def rgb_to_hsv(rgb: RgbLike) -> Hsv:
     """Convert from rgb to hsv.
 
     :param rgb: a tuple of red, green, and blue values ([0, 255], [0, 255], [0, 255]).
@@ -76,7 +79,7 @@ def rgb_to_hsv(rgb: Rgb) -> Hsv:
     return hue, sat, val
 
 
-def hsv_to_rgb(hsv: Hsv) -> Rgb:
+def hsv_to_rgb(hsv: HsvLike) -> Rgb:
     """Convert from hsv to rgb.
 
     :param hsv: a tuple of hue, saturation, and value ([0, 360], [0, 100], [0, 100]).
@@ -93,7 +96,7 @@ def hsv_to_rgb(hsv: Hsv) -> Rgb:
     return _sort_channels_given_hue(hue, (min_, mid, max_))
 
 
-def rgb_to_hsl(rgb: Rgb) -> Hsl:
+def rgb_to_hsl(rgb: RgbLike) -> Hsl:
     """Convert rgb to hsl.
 
     :param rgb: a tuple of red, green, and blue values ([0, 255], [0, 255], [0, 255]).
@@ -113,7 +116,7 @@ def rgb_to_hsl(rgb: Rgb) -> Hsl:
     return hue, sat, lig / 5.1
 
 
-def hsl_to_rgb(hsl: Hsl) -> Rgb:
+def hsl_to_rgb(hsl: HslLike) -> Rgb:
     """Convert hsl to rgb.
 
     :param hsl: a tuple of hue, sat, and lightness ([0, 360], [0, 100], [0, 100]).
@@ -147,7 +150,7 @@ def float_to_8bit_int(float_: float) -> int:
     return int(float_)
 
 
-def float_tuple_to_8bit_int_tuple(rgb: Rgb) -> tuple[int, int, int]:
+def float_tuple_to_8bit_int_tuple(rgb: RgbLike) -> tuple[int, int, int]:
     """Convert an rgb float tuple to an rgb int tuple.
 
     :param rgb: a tuple of floats in the closed interval [0 .. 255]
@@ -157,7 +160,7 @@ def float_tuple_to_8bit_int_tuple(rgb: Rgb) -> tuple[int, int, int]:
     return red, grn, blu
 
 
-def rgb_to_hex(rgb: Rgb) -> Hex:
+def rgb_to_hex(rgb: RgbLike) -> Hex:
     """Convert rgb to hex.
 
     :param rgb: a tuple of red, green, and blue values ([0, 255], [0, 255], [0, 255]).

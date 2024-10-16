@@ -41,7 +41,7 @@ from typing import TYPE_CHECKING, Tuple
 from basic_colormath.conversion import hex_to_rgb
 
 if TYPE_CHECKING:
-    from basic_colormath.type_hints import Rgb, Hex, Lab
+    from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike
 
 _Triple = Tuple[float, float, float]
 
@@ -59,7 +59,7 @@ _XYZ_LRG_VAL_DENOMINATOR = 269.025
 _XYZ_LRG_VAL_EXPONENT = 2.4
 
 
-def _rgb_to_xyz(rgb: Rgb) -> _Triple:
+def _rgb_to_xyz(rgb: RgbLike) -> _Triple:
     """RGB to XYZ conversion. Expects RGB values between 0 and 255.
 
     :param rgb: RGB values between 0 and 255 inclusive.
@@ -124,7 +124,7 @@ _RAD_720 = math.radians(720)
 _V25_E7 = 25**7
 
 
-def rgb_to_lab(rgb: Rgb) -> Lab:
+def rgb_to_lab(rgb: RgbLike) -> Lab:
     """Convert RGB to Lab.
 
     :param rgb: The RGB color to convert.
@@ -144,13 +144,15 @@ def hex_to_lab(hex_: Hex) -> Lab:
     return rgb_to_lab(rgb)
 
 
-def get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
+def get_delta_e_lab(lab_a: LabLike, lab_b: LabLike) -> float:
     """Calculate the Delta E (CIE2000) of two Lab colors.
 
     :param lab_a: The first Lab color.
     :param lab_b: The second Lab color.
     :return: The Delta E (CIE2000) of the two colors.
     """
+    lab_a = tuple(lab_a)
+    lab_b = tuple(lab_b)
     lab_a_bsq = lab_a[2] ** 2
     lab_b_bsq = lab_b[2] ** 2
 
@@ -212,7 +214,7 @@ def get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
     ) ** 0.5
 
 
-def get_sqeuclidean(rgb_a: Rgb, rgb_b: Rgb) -> float:
+def get_sqeuclidean(rgb_a: RgbLike, rgb_b: RgbLike) -> float:
     """Calculate the squared Euclidean distance between two RGB colors.
 
     :param rgb_a: The first RGB color.
@@ -232,7 +234,7 @@ def get_sqeuclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
     return get_sqeuclidean(hex_to_rgb(hex_a), hex_to_rgb(hex_b))
 
 
-def get_euclidean(rgb_a: Rgb, rgb_b: Rgb) -> float:
+def get_euclidean(rgb_a: RgbLike, rgb_b: RgbLike) -> float:
     """Calculate the Euclidean distance between two RGB colors.
 
     :param rgb_a: The first RGB color.
@@ -252,7 +254,7 @@ def get_euclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
     return get_euclidean(hex_to_rgb(hex_a), hex_to_rgb(hex_b))
 
 
-def get_delta_e(rgb_a: Rgb, rgb_b: Rgb) -> float:
+def get_delta_e(rgb_a: RgbLike, rgb_b: RgbLike) -> float:
     """Calculate the Delta E (CIE 2000) between two RGB colors.
 
     :param rgb_a: The first RGB color.

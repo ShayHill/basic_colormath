@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Union
 from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
 
 if TYPE_CHECKING:
-    from basic_colormath.type_hints import Rgb, Hex
+    from basic_colormath.type_hints import Hex, Rgb, RgbLike
 
 _Ratio = Union[float, "tuple[float, ...]", None]
 
@@ -62,7 +62,7 @@ def _infer_ps(ratio: float | tuple[float, ...] | None, num: int) -> tuple[float,
     return ratio + _split_float(1 - sum_ratios, missing)
 
 
-def scale_rgb(rgb: Rgb, scalar: float) -> Rgb:
+def scale_rgb(rgb: RgbLike, scalar: float) -> Rgb:
     """Scale an rgb tuple by a scalar.
 
     :param rgb: rgb tuple to scale ([0, 255], [0, 255], [0, 255])
@@ -73,7 +73,7 @@ def scale_rgb(rgb: Rgb, scalar: float) -> Rgb:
     return red, grn, blu
 
 
-def mix_rgb(*rgb_args: Rgb, ratio: _Ratio = None) -> Rgb:
+def mix_rgb(*rgb_args: RgbLike, ratio: _Ratio = None) -> Rgb:
     """Mix any number of rgb tuples.
 
     :param rgb_args: rgb tuples ([0, 255], [0, 255], [0, 255])
