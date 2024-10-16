@@ -20,19 +20,19 @@ This library is more or less specialized for working with "upscaled" RGB tuples 
 ## distance functions
 
 ```python
-RGB = Annotated[tuple[float, float, float], ([0, 255], [0, 255], [0, 255])]
-HSV = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
-HSL = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
+Rgb = Annotated[tuple[float, float, float], ([0, 255], [0, 255], [0, 255])]
+Hsv = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
+Hsl = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
 Lab = Annotated[tuple[float, float, float], ([0, 100], [-128, 127], [-128, 127])]
 Hex = Annotated[str, "#000fff"]
 
-rgb_to_lab(rgb: RGB) -> Lab:
+rgb_to_lab(rgb: Rgb) -> Lab:
     # Converts RGB to Lab. To optionally cache for get_delta_e_lab
 
 hex_to_lab(hex: Hex) -> Lab:
     # Converts hex to Lab. To optionally cache for get_delta_e_lab
 
-get_delta_e(rgb_a: RGB, rgb_b: RGB) -> float:
+get_delta_e(rgb_a: Rgb, rgb_b: Rgb) -> float:
     # Calculate the Delta E (CIE 2000) between two RGB colors.
     # This is the one you'll usually want.
 
@@ -44,13 +44,13 @@ get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
     # Calculate the Delta E (CIE2000) of two Lab colors.
     # To call with cached Lab values.
 
-get_sqeuclidean(rgb_a: RGB, rgb_b: RGB) -> float:
+get_sqeuclidean(rgb_a: Rgb, rgb_b: Rgb) -> float:
     # Calculate the squared Euclidean distance between two RGB colors.
 
 get_sqeuclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
     # Calculate the squared Euclidean distance between two HEX colors.
 
-get_euclidean(rgb_a: RGB, rgb_b: RGB) -> float:
+get_euclidean(rgb_a: Rgb, rgb_b: Rgb) -> float:
     # Calculate the Euclidean distance between two RGB colors.
 
 get_euclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
@@ -62,17 +62,17 @@ get_euclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
 Converts to other simple formats.
 
 ```python
-def rgb_to_hsv(rgb: RGB) -> HSV: ...
+def rgb_to_hsv(rgb: Rgb) -> Hsv: ...
 
-def hsv_to_rgb(hsv: HSV) -> RGB: ...
+def hsv_to_rgb(hsv: Hsv) -> Rgb: ...
 
-def rgb_to_hsl(rgb: RGB) -> HSL: ...
+def rgb_to_hsl(rgb: Rgb) -> Hsl: ...
 
-def hsl_to_rgb(hsl: HSL) -> RGB: ...
+def hsl_to_rgb(hsl: Hsl) -> Rgb: ...
 
-def rgb_to_hex(rgb: RGB) -> Hex: ...
+def rgb_to_hex(rgb: Rgb) -> Hex: ...
 
-def hex_to_rgb(hex_: Hex) -> RGB: ...
+def hex_to_rgb(hex_: Hex) -> Rgb: ...
 ```
 
 ## convenience functions
@@ -80,10 +80,10 @@ def hex_to_rgb(hex_: Hex) -> RGB: ...
 ```python
 _Ratio = float | tuple[float, ...] | None
 
-scale_rgb(rgb: RGB, scalar: float) -> RGB:
+scale_rgb(rgb: Rgb, scalar: float) -> Rgb:
     # Scale an rgb tuple by a scalar.
 
-mix_rgb(*rgb_args: RGB, ratio: _Ratio=None) -> RGB:
+mix_rgb(*rgb_args: Rgb, ratio: _Ratio=None) -> Rgb:
     # Mix any number of rgb tuples.
 
     :param rgb_args: rgb tuples ([0, 255], [0, 255], [0, 255])
@@ -105,7 +105,7 @@ mix_hex(*hex_args: Hex, ratio: _Ratio=None) -> Hex
 ```python
 def float_to_8bit_int(float_: float | int) -> int: ...
 
-def float_tuple_to_8bit_int_tuple(rgb: RGB) -> tuple[int, int, int]: ...
+def float_tuple_to_8bit_int_tuple(rgb: Rgb) -> tuple[int, int, int]: ...
 ```
 
 ## vectorized functions

@@ -25,7 +25,7 @@ I've tried to preserve Bruce Lindbloom's naming conventions so you can follow al
 
 Intermediate color formats are 3-tuples with the following ranges:
 
-    * RGB [0..255], [0..255], [0.255]
+    * Rgb [0..255], [0..255], [0.255]
     * XYZ [0.0, 1.0286], [0.0, 1.0822], [0.0, 1.178]
     * Lab [0.0, 100], [-86.183, 98.235], [-107.865, 94.477]
 
@@ -41,7 +41,7 @@ from typing import TYPE_CHECKING, Tuple
 from basic_colormath.conversion import hex_to_rgb
 
 if TYPE_CHECKING:
-    from basic_colormath.type_hints import RGB, Hex, Lab
+    from basic_colormath.type_hints import Rgb, Hex, Lab
 
 _Triple = Tuple[float, float, float]
 
@@ -59,7 +59,7 @@ _XYZ_LRG_VAL_DENOMINATOR = 269.025
 _XYZ_LRG_VAL_EXPONENT = 2.4
 
 
-def _rgb_to_xyz(rgb: RGB) -> _Triple:
+def _rgb_to_xyz(rgb: Rgb) -> _Triple:
     """RGB to XYZ conversion. Expects RGB values between 0 and 255.
 
     :param rgb: RGB values between 0 and 255 inclusive.
@@ -124,7 +124,7 @@ _RAD_720 = math.radians(720)
 _V25_E7 = 25**7
 
 
-def rgb_to_lab(rgb: RGB) -> Lab:
+def rgb_to_lab(rgb: Rgb) -> Lab:
     """Convert RGB to Lab.
 
     :param rgb: The RGB color to convert.
@@ -212,7 +212,7 @@ def get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
     ) ** 0.5
 
 
-def get_sqeuclidean(rgb_a: RGB, rgb_b: RGB) -> float:
+def get_sqeuclidean(rgb_a: Rgb, rgb_b: Rgb) -> float:
     """Calculate the squared Euclidean distance between two RGB colors.
 
     :param rgb_a: The first RGB color.
@@ -232,7 +232,7 @@ def get_sqeuclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
     return get_sqeuclidean(hex_to_rgb(hex_a), hex_to_rgb(hex_b))
 
 
-def get_euclidean(rgb_a: RGB, rgb_b: RGB) -> float:
+def get_euclidean(rgb_a: Rgb, rgb_b: Rgb) -> float:
     """Calculate the Euclidean distance between two RGB colors.
 
     :param rgb_a: The first RGB color.
@@ -252,7 +252,7 @@ def get_euclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
     return get_euclidean(hex_to_rgb(hex_a), hex_to_rgb(hex_b))
 
 
-def get_delta_e(rgb_a: RGB, rgb_b: RGB) -> float:
+def get_delta_e(rgb_a: Rgb, rgb_b: Rgb) -> float:
     """Calculate the Delta E (CIE 2000) between two RGB colors.
 
     :param rgb_a: The first RGB color.

@@ -83,7 +83,7 @@ class TestHSV:
         assert np.allclose(rgb, rgb_tuple)
 
 
-class TestHSL:
+class TestHsl:
     def test_vs_colormath(self, rgb_tuple: Tuple[float, float, float]) -> None:
         colormath_rgb = sRGBColor(*rgb_tuple, is_upscaled=True)
         cm_hsl_tuple = convert_color(colormath_rgb, HSLColor).get_value_tuple()
