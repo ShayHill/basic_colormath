@@ -19,87 +19,94 @@ This library is more or less specialized for working with "upscaled" RGB tuples 
 
 ## distance functions
 
-    RGB = Annotated[tuple[float, float, float], ([0, 255], [0, 255], [0, 255])]
-    HSV = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
-    HSL = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
-    Lab = Annotated[tuple[float, float, float], ([0, 100], [-128, 127], [-128, 127])]
-    Hex = Annotated[str, "#000fff"]
+```python
+RGB = Annotated[tuple[float, float, float], ([0, 255], [0, 255], [0, 255])]
+HSV = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
+HSL = Annotated[tuple[float, float, float], ([0, 365), [0, 100], [0, 100])]
+Lab = Annotated[tuple[float, float, float], ([0, 100], [-128, 127], [-128, 127])]
+Hex = Annotated[str, "#000fff"]
 
-    rgb_to_lab(rgb: RGB) -> Lab:
-        # Converts RGB to Lab. To optionally cache for get_delta_e_lab
+rgb_to_lab(rgb: RGB) -> Lab:
+    # Converts RGB to Lab. To optionally cache for get_delta_e_lab
 
-    hex_to_lab(hex: Hex) -> Lab:
-        # Converts hex to Lab. To optionally cache for get_delta_e_lab
+hex_to_lab(hex: Hex) -> Lab:
+    # Converts hex to Lab. To optionally cache for get_delta_e_lab
 
-    get_delta_e(rgb_a: RGB, rgb_b: RGB) -> float:
-        # Calculate the Delta E (CIE 2000) between two RGB colors.
-        # This is the one you'll usually want.
+get_delta_e(rgb_a: RGB, rgb_b: RGB) -> float:
+    # Calculate the Delta E (CIE 2000) between two RGB colors.
+    # This is the one you'll usually want.
 
-    get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
-        # Calculate the Delta E (CIE 2000) between two hex colors.
-        # Takes hex colorstrings.
+get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
+    # Calculate the Delta E (CIE 2000) between two hex colors.
+    # Takes hex colorstrings.
 
-    get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
-        # Calculate the Delta E (CIE2000) of two Lab colors.
-        # To call with cached Lab values.
+get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
+    # Calculate the Delta E (CIE2000) of two Lab colors.
+    # To call with cached Lab values.
 
-    get_sqeuclidean(rgb_a: RGB, rgb_b: RGB) -> float:
-        # Calculate the squared Euclidean distance between two RGB colors.
+get_sqeuclidean(rgb_a: RGB, rgb_b: RGB) -> float:
+    # Calculate the squared Euclidean distance between two RGB colors.
 
-    get_sqeuclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
-        # Calculate the squared Euclidean distance between two HEX colors.
+get_sqeuclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
+    # Calculate the squared Euclidean distance between two HEX colors.
 
-    get_euclidean(rgb_a: RGB, rgb_b: RGB) -> float:
-        # Calculate the Euclidean distance between two RGB colors.
+get_euclidean(rgb_a: RGB, rgb_b: RGB) -> float:
+    # Calculate the Euclidean distance between two RGB colors.
 
-    get_euclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
-        # Calculate the Euclidean distance between two HEX colors.
+get_euclidean_hex(hex_a: Hex, hex_b: Hex) -> float:
+    # Calculate the Euclidean distance between two HEX colors.
+```
 
 ## other conversions
 
 Converts to other simple formats.
 
-    rgb_to_hsv(rgb: RGB) -> HSV
+```python
+def rgb_to_hsv(rgb: RGB) -> HSV: ...
 
-    hsv_to_rgb(hsv: HSV) -> RGB
+def hsv_to_rgb(hsv: HSV) -> RGB: ...
 
-    rgb_to_hsl(rgb: RGB) -> HSL
+def rgb_to_hsl(rgb: RGB) -> HSL: ...
 
-    hsl_to_rgb(hsl: HSL) -> RGB
+def hsl_to_rgb(hsl: HSL) -> RGB: ...
 
-    rgb_to_hex(rgb: RGB) -> Hex
+def rgb_to_hex(rgb: RGB) -> Hex: ...
 
-    hex_to_rgb(hex_: Hex) -> RGB
+def hex_to_rgb(hex_: Hex) -> RGB: ...
+```
 
 ## convenience functions
 
-    _Ratio = float | tuple[float, ...] | None
+```python
+_Ratio = float | tuple[float, ...] | None
 
-    scale_rgb(rgb: RGB, scalar: float) -> RGB:
-        # Scale an rgb tuple by a scalar.
+scale_rgb(rgb: RGB, scalar: float) -> RGB:
+    # Scale an rgb tuple by a scalar.
 
-    mix_rgb(*rgb_args: RGB, ratio: _Ratio=None) -> RGB:
-        # Mix any number of rgb tuples.
+mix_rgb(*rgb_args: RGB, ratio: _Ratio=None) -> RGB:
+    # Mix any number of rgb tuples.
 
-        :param rgb_args: rgb tuples ([0, 255], [0, 255], [0, 255])
-        :param ratio: 0.0 to 1.0 for the weight of the first rgb_arg or a tuple of floats
-            to distribute across rgb_args or None for equal ratios. Ratios will be
-            normalized and (if fewer ratios than colors are provided) the remaining
-            ratios will be equal.
-        :return: rgb tuple ([0, 255], [0, 255], [0, 255])
+    :param rgb_args: rgb tuples ([0, 255], [0, 255], [0, 255])
+    :param ratio: 0.0 to 1.0 for the weight of the first rgb_arg or a tuple of floats
+        to distribute across rgb_args or None for equal ratios. Ratios will be
+        normalized and (if fewer ratios than colors are provided) the remaining
+        ratios will be equal.
+    :return: rgb tuple ([0, 255], [0, 255], [0, 255])
 
-    scale_hex(hex_: Hex, scalar: float)-> Hex
-        # Scale a hex color by a scalar.
+scale_hex(hex_: Hex, scalar: float)-> Hex
+    # Scale a hex color by a scalar.
 
-    mix_hex(*hex_args: Hex, ratio: _Ratio=None) -> Hex
-        # Mix any number of hex colors.
+mix_hex(*hex_args: Hex, ratio: _Ratio=None) -> Hex
+    # Mix any number of hex colors.
+```
 
 ## better float to int conversion
 
-    float_to_8bit_int(float_: float | int) -> int:
+```python
+def float_to_8bit_int(float_: float | int) -> int: ...
 
-    float_tuple_to_8bit_int_tuple(rgb: RGB) -> tuple[int, int, int]:
-
+def float_tuple_to_8bit_int_tuple(rgb: RGB) -> tuple[int, int, int]: ...
+```
 
 ## vectorized functions
 
@@ -137,15 +144,17 @@ An optional second argument creates a *cross-proximity* matrix. This is a matrix
 
 Sadly, [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) has been abandoned, long enough now that a numpy function on which it relies has been not only deprecated but removed. If you still need to use [python-colormath](https://github.com/gtaylor/python-colormath/tree/master), patch `np.asscalar`:
 
-    import numpy as np
-    import numpy.typing as npt
+```python
+import numpy as np
+import numpy.typing as npt
 
-    def _patch_asscalar(a: npt.NDArray[np.float64]) -> float:
-        """Alias for np.item(). Patch np.asscalar for colormath.
+def _patch_asscalar(a: npt.NDArray[np.float64]) -> float:
+    """Alias for np.item(). Patch np.asscalar for colormath.
 
-        :param a: numpy array
-        :return: input array as scalar
-        """
-        return a.item()
+    :param a: numpy array
+    :return: input array as scalar
+    """
+    return a.item()
 
-    np.asscalar = _patch_asscalar  # type: ignore
+np.asscalar = _patch_asscalar  # type: ignore
+```
