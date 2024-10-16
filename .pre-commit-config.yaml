@@ -68,30 +68,6 @@ repos:
   hooks:
   - id: remove-tabs
 
-# - repo: https://github.com/commitizen-tools/commitizen
-#   rev: v2.40.0
-#   hooks:
-#   - id: commitizen
-
-# pylint still broken in python 3.12
-# - repo: https://github.com/pre-commit/mirrors-pylint
-#   rev: v3.0.0a5
-#   hooks:
-#   - id: pylint
-#     exclude: "tests"
-#     name: pylint
-#     args:
-#     - --good-names=i,j,_,f
-#     - --disable=protected-access
-#     - --disable=no-member
-#     - --disable=import-error
-#     - --disable=no-name-in-module
-#     - --load-plugins=pylint.extensions.docparams
-#     - --accept-no-param-doc=n
-#     - --accept-no-raise-doc=n
-#     - --accept-no-return-doc=n
-#     - --accept-no-yields-doc=n
-
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # ignores
   # COM812 Trailing comma missing (does not agree with Black)
