@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import Any, TypeVar, Union
+from typing import Any, TypeVar
 
 import numpy as np
 from numpy import typing as npt
@@ -14,15 +14,14 @@ from numpy import typing as npt
 from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
 
 _FloatArray = npt.NDArray[np.float64]
-_IntArray = npt.NDArray[np.int64]
-_NumberArray = Union[_FloatArray, _IntArray, npt.NDArray[np.uint8]]
+_Uint8Array = npt.NDArray[np.uint8]
 _TArray = TypeVar("_TArray", bound=npt.NDArray[Any])
 
 _MAX_8BIT = 255
 
 
 def _get_hues_from_rgbs(
-    rgbs: _NumberArray, mins: _FloatArray, maxs: _FloatArray
+    rgbs: npt.ArrayLike, mins: _FloatArray, maxs: _FloatArray
 ) -> _FloatArray:
     """Get the hue values in degrees from an array of rgb tuples.
 
@@ -32,7 +31,7 @@ def _get_hues_from_rgbs(
     :param maxs: (..., 1) pre-calculated maximum values in the rgb tuples.
     :return: (..., 1) The hue values in degrees, [0, 360).
     """
-    reds, grns, blus = (rgbs[..., i].astype(float) for i in range(3))
+    reds, grns, blus = (np.asarray(rgbs, dtype=np.float64)[..., i] for i in range(3))
     hues = np.zeros_like(reds).astype(float)
     deltas = maxs - mins
     delta_mask = maxs != mins
@@ -76,7 +75,7 @@ def _sort_channels_given_hues(hues: _FloatArray, min_mid_max: _TArray) -> _TArra
     return rgbs
 
 
-def rgbs_to_hsv(rgbs: _NumberArray) -> _FloatArray:
+def rgbs_to_hsv(rgbs: npt.ArrayLike) -> _FloatArray:
     """Convert from rgb to hsv.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -96,7 +95,7 @@ def rgbs_to_hsv(rgbs: _NumberArray) -> _FloatArray:
     return hsvs
 
 
-def hsvs_to_rgb(hsvs: _FloatArray) -> _FloatArray:
+def hsvs_to_rgb(hsvs: npt.ArrayLike) -> _FloatArray:
     """Convert from hsv to rgb.
 
     :param hsv: an array (...,3) of hue, sat, and val values
@@ -104,7 +103,7 @@ def hsvs_to_rgb(hsvs: _FloatArray) -> _FloatArray:
     :return: an array (..., 3) of red, green, and blue values
         [0, 255], [0, 255], [0, 255]
     """
-    hues, sats, vals = (hsvs[..., i].astype(float) for i in range(3))
+    hues, sats, vals = (np.asarray(hsvs, dtype=np.float64)[..., i] for i in range(3))
     maxs = vals * 2.55
     mins = maxs - (sats / 100 * maxs)
     hue_mid_ratio = 1 - abs((hues / 60) % 2 - 1)
@@ -113,7 +112,7 @@ def hsvs_to_rgb(hsvs: _FloatArray) -> _FloatArray:
     return _sort_channels_given_hues(hues, mins_mids_maxs)
 
 
-def rgbs_to_hsl(rgbs: _NumberArray) -> _FloatArray:
+def rgbs_to_hsl(rgbs: npt.ArrayLike) -> _FloatArray:
     """Convert rgb to hsl.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -139,7 +138,7 @@ def rgbs_to_hsl(rgbs: _NumberArray) -> _FloatArray:
     return hsls
 
 
-def hsls_to_rgb(hsls: _FloatArray) -> _FloatArray:
+def hsls_to_rgb(hsls: npt.ArrayLike) -> _FloatArray:
     """Convert hsl to rgb.
 
     :param hsls: an array (...,3) of hue, sat, and lightness values
@@ -147,7 +146,7 @@ def hsls_to_rgb(hsls: _FloatArray) -> _FloatArray:
     :return: an array (..., 3) of red, green, and blue values
         [0, 255], [0, 255], [0, 255]
     """
-    hues, sats, ligs = (hsls[..., i].astype(float) for i in range(3))
+    hues, sats, ligs = (np.asarray(hsls, dtype=np.float64)[..., i] for i in range(3))
     max_ps = (100 - abs(2 * ligs - 100)) * sats * 0.0255
     mid_ps = max_ps * (1 - abs((hues / 60) % 2 - 1))
     mins = (ligs - max_ps / 5.1) * 2.55
@@ -159,7 +158,7 @@ def hsls_to_rgb(hsls: _FloatArray) -> _FloatArray:
 _BIG_INT: int = 2**32 - 1
 
 
-def floats_to_uint8(rgbs: _NumberArray) -> npt.NDArray[np.uint8]:
+def floats_to_uint8(rgbs: npt.ArrayLike) -> _Uint8Array:
     """Convert a float between 0 and 255 to an int between 0 and 255.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -173,23 +172,14 @@ def floats_to_uint8(rgbs: _NumberArray) -> npt.NDArray[np.uint8]:
     Numpy uses floor for int conversion. Round would be better, but would still
     "short change" 0 and 255. This function gives a better distribution.
     """
+    rgbs = np.asarray(rgbs)
     if rgbs.dtype is np.uint8:
         return rgbs.astype(np.uint8)
     big_ints = (np.clip(rgbs, 0, 255) / 255 * _BIG_INT).astype(np.uint32)
     return (big_ints >> 24).astype(np.uint8)
 
 
-def _rgb_to_hex(rgb: _NumberArray) -> str:
-    """Convert an rgb tuple to a hex string.
-
-    :param rgb: A tuple of red, green, and blue values [0, 255].
-    :return: A hex string. e.g. '#ff0000'
-    """
-    r, g, b = map(int, rgb)
-    return rgb_to_hex((r, g, b))
-
-
-def rgbs_to_hex(rgbs: _NumberArray) -> npt.NDArray[np.str_]:
+def rgbs_to_hex(rgbs: npt.ArrayLike) -> npt.NDArray[np.str_]:
     """Convert rgb to hex.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -197,23 +187,25 @@ def rgbs_to_hex(rgbs: _NumberArray) -> npt.NDArray[np.str_]:
     :return: an array (..., 1) of hex strings. e.g. '#ff0000'
     """
     rgbs = floats_to_uint8(rgbs)
-    return np.apply_along_axis(_rgb_to_hex, -1, rgbs)
+    return np.apply_along_axis(rgb_to_hex, -1, rgbs)
 
 
-def _hex_to_rgb(hex_: npt.NDArray[np.str_]) -> tuple[int, int, int]:
+def _hex_to_rgb(hex_: npt.ArrayLike) -> _Uint8Array:
     """Convert a hex string to an rgb tuple.
 
     :param hex_: A hex string. e.g. '#ff0000'
     :return: A tuple of red, green, and blue values [0, 255].
     """
-    return hex_to_rgb(hex_[0])
+    hex_ = np.asarray(hex_)
+    return np.array(hex_to_rgb(hex_[0]), dtype=np.uint8)
 
 
-def hexs_to_rgb(hexs: npt.NDArray[np.str_]) -> _FloatArray:
+def hexs_to_rgb(hexs: npt.ArrayLike) -> _Uint8Array:
     """Convert hex to rgb.
 
     :param hexs: an array (..., 1) of hex strings. e.g. '#ff0000'
     :return: an array (..., 3) of red, green, and blue values
         [0, 255], [0, 255], [0, 255]
     """
+    hexs = np.asarray(hexs)
     return np.apply_along_axis(_hex_to_rgb, -1, hexs[..., np.newaxis])
