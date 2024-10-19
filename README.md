@@ -75,6 +75,10 @@ def rgb_to_hex(rgb: Rgb) -> Hex: ...
 def hex_to_rgb(hex_: Hex) -> Rgb: ...
 ```
 
+### basic_colormath vs python.colorsys
+
+The `colorsys` module in the Python standard library also provides function for rgb to / from hsv and hls (*not* hsl) conversions. These functions use the same math but take and return floats in different ranges. Colorsys assumes you are working with float in the range [0, 1] for rgb, hsv, and hls values. Basic_colormath assumes you are working with floats in the range [0, 255] for rgb values and [0, 365], [0, 100], [0, 100] for hsv and hsl values. Which is better for you will depend on where you are getting your data and where you will put the results.
+
 ## convenience functions
 
 ```python

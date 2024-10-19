@@ -9,6 +9,7 @@
 # pyright: reportUnknownVariableType=false
 # pyright: reportUnknownArgumentType=false
 
+import colorsys
 import random
 from typing import Tuple
 
@@ -116,3 +117,22 @@ class TestHex:
         hex_ = rgb_to_hex(rgb_tuple)
         rgb = hex_to_rgb(hex_)
         assert rgb == rgb_tuple
+
+
+class TestVsColorsys:
+
+    def test_rgb_to_hsv(self, rgb_tuple: Tuple[float, float, float]) -> None:
+        """Test that the hue is the same when the rgb tuple is reversed."""
+        hsv = rgb_to_hsv(rgb_tuple)
+        rgb_floats = [x / 255 for x in rgb_tuple]
+        hsv1 = [hsv[0] / 360, hsv[1] / 100, hsv[2] / 100]
+        hsv2 = colorsys.rgb_to_hsv(*rgb_floats)
+        assert np.allclose(hsv1, hsv2)
+
+    def test_rgb_to_hsl(self, rgb_tuple: Tuple[float, float, float]) -> None:
+        """Test that the hue is the same when the rgb tuple is reversed."""
+        hsl = rgb_to_hsl(rgb_tuple)
+        rgb_floats = [x / 255 for x in rgb_tuple]
+        hls1 = [hsl[0] / 360, hsl[2] / 100, hsl[1] / 100]
+        hls2 = colorsys.rgb_to_hls(*rgb_floats)
+        assert np.allclose(hls1, hls2)
