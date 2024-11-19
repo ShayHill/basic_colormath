@@ -1,7 +1,7 @@
 """Test that functions returning vectors from ArrayLike args are typed correctly.
 
 The Python type system will not recognize when a function returns
-`npt.NDArray[np.int64]` when hinted to return `npt.NDArray[np.float64]`. This module
+`npt.NDArray[np.int32]` when hinted to return `npt.NDArray[np.float64]`. This module
 checks that the functions in vec_conversion.py return the correct types.
 
 :author: Shay Hill
@@ -27,8 +27,8 @@ class TestRgbsToHsv:
 
 
 class TestHsvsToRgb:
-    def test_int64_input(self):
-        not_floats = np.array([[0, 1, 1], [0, 0, 0]], dtype=np.int64)
+    def test_int32_input(self):
+        not_floats = np.array([[0, 1, 1], [0, 0, 0]], dtype=np.int32)
         result = vc.hsvs_to_rgb(not_floats)
         assert result.dtype == np.float64
 
@@ -51,8 +51,8 @@ class TestRgbsToHsl:
 
 
 class TestHslsToRgb:
-    def test_int64_input(self):
-        not_floats = np.array([[0, 1, 1], [0, 0, 0]], dtype=np.int64)
+    def test_int32_input(self):
+        not_floats = np.array([[0, 1, 1], [0, 0, 0]], dtype=np.int32)
         result = vc.hsls_to_rgb(not_floats)
         assert result.dtype == np.float64
 
