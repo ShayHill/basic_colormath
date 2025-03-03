@@ -44,20 +44,20 @@ repos:
         # files: .pre-commit-config.yaml
 
 - repo: https://github.com/PyCQA/isort
-  rev: 5.13.2
+  rev: 6.0.1
   hooks:
   - id: isort
     args: ["--profile", "black", "--filter-files", "--combine-as", "honor--noqa"]
 
 - repo: https://github.com/psf/black
-  rev: 24.10.0
+  rev: 25.1.0
   hooks:
   - id: black
     language_version: python3.9
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.19.0
+  rev: v3.19.1
   hooks:
   - args:
     - --py38-plus
@@ -79,7 +79,7 @@ repos:
   # N802 function name should be lowercase
   # N803 argument name should be lowercase
   # ICN001 import numpy as np
-  rev: 'v0.7.4'
+  rev: 'v0.9.9'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -91,6 +91,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.389
+  rev: v1.1.396
   hooks:
     - id: pyright
