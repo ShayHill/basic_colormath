@@ -56,7 +56,7 @@ def _sort_channels_given_hues(hues: _FloatArray, min_mid_max: _TArray) -> _TArra
     and maximum values in an rgb tuple will be consistent. For instance, given a hue
     of 0, the red channel will always be the highest value.
     """
-    rgbs: _TArray = cast(_TArray, np.copy(min_mid_max))
+    rgbs: _TArray = cast("_TArray", np.copy(min_mid_max))
     hue_sextants = (hues // 60).astype(int)
     sextant2order = {
         0: (2, 1, 0),

@@ -143,6 +143,7 @@ def get_sqeuclideans(rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike) -> _FloatArra
     :return: an array (...) squared Euclidean distances between the two RGB colors.
     """
     rgbs_a = np.asarray(rgbs_a, dtype=np.float64)
+    rgbs_b = np.asarray(rgbs_b, dtype=np.float64)
     return np.sum((rgbs_a - rgbs_b) ** 2, axis=-1)
 
 

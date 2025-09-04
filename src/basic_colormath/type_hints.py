@@ -13,12 +13,12 @@ Lab = Annotated[tuple[float, float, float], ([0, 100], [-128, 127], [-128, 127])
 Hex = Annotated[str, "#000fff"]
 """
 
-from typing import Iterable, Tuple
+from collections.abc import Iterable
 
-Rgb = Tuple[float, float, float]
-Hsv = Tuple[float, float, float]
-Hsl = Tuple[float, float, float]
-Lab = Tuple[float, float, float]
+Rgb = tuple[float, float, float]
+Hsv = tuple[float, float, float]
+Hsl = tuple[float, float, float]
+Lab = tuple[float, float, float]
 Hex = str
 
 RgbLike = Rgb | Iterable[float]

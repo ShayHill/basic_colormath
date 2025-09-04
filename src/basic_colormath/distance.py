@@ -36,14 +36,14 @@ Intermediate color formats are 3-tuples with the following ranges:
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 
 from basic_colormath.conversion import hex_to_rgb
 
 if TYPE_CHECKING:
     from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike
 
-_Triple = Tuple[float, float, float]
+_Triple = tuple[float, float, float]
 
 _RGB_TO_XYZ = [
     [0.412424, 0.357579, 0.180464],
