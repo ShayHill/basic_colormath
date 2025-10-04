@@ -11,7 +11,7 @@ Everything I wanted to salvage from the [python-colormath](https://github.com/gt
 
 Lab color format is exciting because it can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab *with no additional information*, then the result will—of course—*not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
 
-I've installed [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) on a lot of projects. The library does many interesting things, but most of what I wanted was perceptual color distance. This requires Lab colors, which have more parameters than an RGB tuple provides. **Colormath didn't use those parameters**, so the result didn't require the elaborate classes and methods provided by Colormath.
+I've installed [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) on a lot of projects. The library does many interesting things, but most of what I wanted was perceptual color distance. This requires Lab colors, which allow more parameters than R, G, and B. **Colormath didn't use those parameters**, so the result didn't require the elaborate classes and methods provided by Colormath.
 
 The color distance I provide here is DeltaE CIE 2000. Aside from (presumably) some specialized applications, this is the best of the multiple color distances provided by [python-colormath](https://github.com/gtaylor/python-colormath/tree/master). Tuples in, float out, and with a lot more speed. It doesn't use all of those expert parameters, **but neither did Colormath**. This is the same result you'll get from any of the online DeltaE calculators you're likely to find.
 
@@ -41,7 +41,7 @@ get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
     # Takes hex colorstrings.
 
 get_delta_e_lab(lab_a: Lab, lab_b: Lab) -> float:
-    # Calculate the Delta E (CIE2000) of two Lab colors.
+    # Calculate the Delta E (CIE2000) between two Lab colors.
     # To call with cached Lab values.
 
 get_sqeuclidean(rgb_a: Rgb, rgb_b: Rgb) -> float:
@@ -77,7 +77,7 @@ def hex_to_rgb(hex_: Hex) -> Rgb: ...
 
 ### basic_colormath vs python.colorsys
 
-The `colorsys` module in the Python standard library also provides function for rgb to / from hsv and hls (*not* hsl) conversions. These functions use the same math but take and return floats in different ranges. Colorsys assumes you are working with float in the range [0, 1] for rgb, hsv, and hls values. Basic_colormath assumes you are working with floats in the range [0, 255] for rgb values and [0, 365], [0, 100], [0, 100] for hsv and hsl values. Which is better for you will depend on where you are getting your data and where you will put the results.
+The `colorsys` module in the Python standard library also provides functions for rgb to hsv to hls (*not* hsl) conversion. These functions use the same math but take and return floats in different ranges. Colorsys assumes you are working with float in the range [0, 1] for rgb, hsv, and hls values. Basic_colormath assumes you are working with floats in the range [0, 255] for rgb values and [0, 365], [0, 100], [0, 100] for hsv and hsl values. Which is better for you will depend on where you are getting your data and where you will put the results.
 
 ## convenience functions
 
@@ -88,7 +88,7 @@ scale_rgb(rgb: Rgb, scalar: float) -> Rgb:
     # Scale an rgb tuple by a scalar.
 
 mix_rgb(*rgb_args: Rgb, ratio: _Ratio=None) -> Rgb:
-    # Mix any number of rgb tuples.
+    """ Mix any number of rgb tuples.
 
     :param rgb_args: rgb tuples ([0, 255], [0, 255], [0, 255])
     :param ratio: 0.0 to 1.0 for the weight of the first rgb_arg or a tuple of floats
@@ -96,6 +96,7 @@ mix_rgb(*rgb_args: Rgb, ratio: _Ratio=None) -> Rgb:
         normalized and (if fewer ratios than colors are provided) the remaining
         ratios will be equal.
     :return: rgb tuple ([0, 255], [0, 255], [0, 255])
+    """
 
 scale_hex(hex_: Hex, scalar: float)-> Hex
     # Scale a hex color by a scalar.
@@ -114,7 +115,7 @@ def float_tuple_to_8bit_int_tuple(rgb: Rgb) -> tuple[int, int, int]: ...
 
 ## vectorized functions
 
-If you have numpy installed in your env, basic_colormath will provide vectorized versions of most functions along with proximity matrices and cross-proximity matrices.
+If you have numpy installed in your Python environment, basic_colormath will provide vectorized versions of most functions along with proximity matrices and cross-proximity matrices.
 
 | Function                      | Vectorized Function           | (Cross-) Proximity Matrix  |
 | ----------------------------- | ----------------------------- | -------------------------- |
