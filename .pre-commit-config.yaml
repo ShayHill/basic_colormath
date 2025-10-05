@@ -64,7 +64,7 @@ repos:
   # N802 function name should be lowercase
   # N803 argument name should be lowercase
   # ICN001 import numpy as np
-  rev: 'v0.12.11'
+  rev: 'v0.13.3'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -81,6 +81,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.405
+  rev: v1.1.406
   hooks:
     - id: pyright
