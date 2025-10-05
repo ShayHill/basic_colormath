@@ -1,6 +1,6 @@
 [project]
 name = "basic_colormath"
-version = "0.5.0"
+version = "1.0.0"
 description = "Simple color conversion and perceptual (DeltaE CIE 2000) difference"
 authors = [{ name = "Shay Hill", email = "shay_public@hotmail.com" }]
 license = "MIT"
@@ -19,9 +19,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.5.0"
+version = "1.0.0"
 tag_format = "$version"
-major-version-zero = true
+major-version-zero = false
 version_files = ["pyproject.toml:^version"]
 
 
