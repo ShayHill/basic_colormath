@@ -41,7 +41,7 @@ repos:
         # files: .pre-commit-config.yaml
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.20.0
+  rev: v3.21.1
   hooks:
   - args:
     - --py39-plus
@@ -52,7 +52,7 @@ repos:
   hooks:
   - id: remove-tabs
 
-- repo: https://github.com/charliermarsh/ruff-pre-commit
+- repo: https://github.com/astral-sh/ruff-pre-commit
   # ignores
   # COM812 Trailing comma missing (does not agree with Black)
   # D203 1 blank line required before class docstring (incompatible with D211)
@@ -64,7 +64,7 @@ repos:
   # N802 function name should be lowercase
   # N803 argument name should be lowercase
   # ICN001 import numpy as np
-  rev: 'v0.13.3'
+  rev: 'v0.14.4'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -81,6 +81,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.406
+  rev: v1.1.407
   hooks:
     - id: pyright
