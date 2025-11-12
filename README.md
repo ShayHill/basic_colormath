@@ -148,7 +148,7 @@ If you have numpy installed in your Python environment, basic_colormath will pro
 
 An optional second argument creates a *cross-proximity* matrix. This is a matrix with the same number of rows as the first argument and the same number of columns as the second argument. The value at row `i` and column `j` is the distance between the color at index `i` in the first argument and the color at index `j` in the second argument.
 
-## If you need more
+## if you need more
 
 Sadly, [python-colormath](https://github.com/gtaylor/python-colormath/tree/master) has been abandoned, long enough now that a numpy function on which it relies has been not only deprecated but removed. If you still need to use [python-colormath](https://github.com/gtaylor/python-colormath/tree/master), patch `np.asscalar`:
 
