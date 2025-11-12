@@ -1,21 +1,28 @@
 [project]
-name = "basic_colormath"
+name = "basic-colormath"
 version = "1.0.0"
 description = "Simple color conversion and perceptual (DeltaE CIE 2000) difference"
-authors = [{ name = "Shay Hill", email = "shay_public@hotmail.com" }]
-license = "MIT"
 readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Shay Hill", email = "shay_public@hotmail.com" }
+]
 requires-python = ">=3.9"
 dependencies = []
 
-[project.optional-dependencies]
-vectorize = ["numpy"]
-dev = ["commitizen", "colormath", "numpy", "pre-commit", "pytest", "tox"]
-
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.9.4,<0.10.0"]
+build-backend = "uv_build"
 
+
+[dependency-groups]
+dev = [
+    "commitizen>=4.10.0",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.2",
+    "colormath"
+]
+extra = ["numpy"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -29,18 +36,14 @@ version_files = ["pyproject.toml:^version"]
 profile = "black"
 
 
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = py{39,310,311,312,313}
+[tool.pytest.ini_options]
+addopts = "--doctest-modules"
+pythonpath = ["tests"]
+log_cli = 1
 
-[testenv]
-deps =
-    pytest
-    numpy
-    colormath
-commands = pytest
-"""
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
 
 
 [tool.pyright]
@@ -61,4 +64,4 @@ reportUnnecessaryTypeIgnoreComment = true
 reportUnusedCallResult = true
 
 venvPath = "."
-venv = "./venv"
+venv = "./.venv"
