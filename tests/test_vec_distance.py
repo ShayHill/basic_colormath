@@ -20,6 +20,7 @@ from basic_colormath.distance import (
     get_sqeuclidean_hex,
     hex_to_lab,
     rgb_to_lab,
+    lab_to_rgb,
 )
 from basic_colormath.vec_distance import (
     _rgbs_to_xyz,
@@ -43,6 +44,13 @@ from basic_colormath.vec_distance import (
 )
 
 
+class TestLabToRgb:
+    def test_round_trip(self, rgb_tuple: tuple[int, int, int]):
+        """Test that vectorized lab to rgb matches single conversion."""
+        lab = rgb_to_lab(rgb_tuple)
+        rgb = lab_to_rgb(lab)
+        assert np.testing.assert_array_almost_equal(rgb_tuple, rgb, decimal=4) is None
+
 class TestRgbsToXyz:
     def test_match_single(self):
         """Match result of single conversion mapped over array."""
@@ -54,7 +62,7 @@ class TestRgbsToXyz:
             np.testing.assert_array_almost_equal(xyzs[ixs], xyz)
 
 
-class TestXyxsToRgb:
+class TestXyzsToLab:
     def test_match_single(self):
         """Match result of single conversion mapped over array."""
         xyzs = np.random.rand(10, 11, 12, 3)

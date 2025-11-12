@@ -36,7 +36,7 @@ Intermediate color formats are 3-tuples with the following ranges:
 import math
 
 from basic_colormath.conversion import hex_to_rgb
-from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike
+from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike, Rgb
 
 _Triple = tuple[float, float, float]
 
@@ -45,6 +45,7 @@ _RGB_TO_XYZ = [
     [0.212656, 0.715158, 0.0721856],
     [0.0193324, 0.119193, 0.950444],
 ]
+
 
 # constants to "linearize" rgb values
 _XYZ_NORMALIZATION_THRESHOLD = 10.31475
@@ -80,6 +81,34 @@ def _rgb_to_xyz(rgb: RgbLike) -> _Triple:
     return rgb_r, rgb_g, rgb_b
 
 
+_XYZ_TO_RGB = [
+    [3.24070846, -1.53725917, -0.49857039],
+    [-0.96925735, 1.87599516, 0.04155555],
+    [0.05563507, -0.2039958, 1.05706957],
+]
+
+
+def _xyz_to_rgb(xyz: _Triple) -> _Triple:
+    """Inverse of _rgb_to_xyz. Converts XYZ [0..1] to RGB [0..255]"""
+    # Matrix multiply (the inverse matrix)
+    linear_channels = [sum(x * y for x, y in zip(row, xyz)) for row in _XYZ_TO_RGB]
+    # Invert the channel normalization
+    rgb: list[float] = []
+    threshold_linear = _XYZ_NORMALIZATION_THRESHOLD / _XYZ_SML_VAL_DENOMINATOR
+    for linear_channel in linear_channels:
+        if linear_channel <= threshold_linear:
+            channel = linear_channel * _XYZ_SML_VAL_DENOMINATOR
+        else:
+            channel = (
+                _XYZ_LRG_VAL_DENOMINATOR
+                * (linear_channel ** (1 / _XYZ_LRG_VAL_EXPONENT))
+                - _XYZ_LRG_VAL_OFFSET
+            )
+        rgb.append(min(max(channel, 0), 255))
+    rgb_r, rgb_g, rgb_b = rgb
+    return rgb_r, rgb_g, rgb_b
+
+
 _CIE_E = 216 / 24389
 _1_3RD = 1 / 3
 _16_116THS = 16 / 116
@@ -109,6 +138,31 @@ def _xyz_to_lab(xyz: _Triple) -> Lab:
     return lab_l, lab_a, lab_b
 
 
+def _lab_to_xyz(lab: LabLike) -> _Triple:
+    """Convert Lab to XYZ.
+
+    :param lab: Lab color tuple
+    :return: XYZ color tuple
+    """
+    lab_l, lab_a, lab_b = lab
+
+    # Recover f(y), f(x), f(z)
+    fy = (lab_l + 16.0) / 116
+    fx = fy + (lab_a / 500)
+    fz = fy - (lab_b / 200)
+
+    def inv_f(t: float) -> float:
+        if t**3 > _CIE_E:
+            return t**3
+        else:
+            return (t - _16_116THS) / 7.787
+
+    x = inv_f(fx) * _XYZ_ILLUM[0]
+    y = inv_f(fy) * _XYZ_ILLUM[1]
+    z = inv_f(fz) * _XYZ_ILLUM[2]
+    return x, y, z
+
+
 _RAD_6 = math.radians(6)
 _RAD_25 = math.radians(25)
 _RAD_30 = math.radians(30)
@@ -128,6 +182,15 @@ def rgb_to_lab(rgb: RgbLike) -> Lab:
     """
     xyz = _rgb_to_xyz(rgb)
     return _xyz_to_lab(xyz)
+
+def lab_to_rgb(lab: LabLike) -> Rgb:
+    """Convert Lab to RGB.
+
+    :param lab: The Lab color to convert.
+    :return: The RGB color.
+    """
+    xyz = _lab_to_xyz(lab)
+    return _xyz_to_rgb(xyz)
 
 
 def hex_to_lab(hex_: Hex) -> Lab:
@@ -270,3 +333,18 @@ def get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
     :return: The Delta E (CIE 2000) between the two hex colors.
     """
     return get_delta_e_lab(hex_to_lab(hex_a), hex_to_lab(hex_b))
+
+
+if __name__ == "__main__":
+
+    import random
+
+    for _i in range(1000):
+        rgb = (
+            random.uniform(0, 255),
+            random.uniform(0, 255),
+            random.uniform(0, 255),
+        )
+        lab = rgb_to_lab(rgb)
+        rgb_back = lab_to_rgb(lab)
+        assert all(abs(a - b) < 0.01 for a, b in zip(rgb, rgb_back, strict=True))
