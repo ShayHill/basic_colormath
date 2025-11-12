@@ -30,6 +30,7 @@ from basic_colormath.distance import (
     get_euclidean_hex,
     get_sqeuclidean,
     get_sqeuclidean_hex,
+    lab_to_rgb,
     rgb_to_lab,
 )
 from basic_colormath.mix import mix_hex, mix_rgb, scale_hex, scale_rgb
@@ -47,6 +48,7 @@ __all__ = [
     "hex_to_rgb",
     "hsl_to_rgb",
     "hsv_to_rgb",
+    "lab_to_rgb",
     "mix_hex",
     "mix_rgb",
     "rgb_to_hex",
@@ -82,6 +84,7 @@ if numpy:
         get_sqeuclidean_matrix_hex,
         get_sqeuclideans,
         get_sqeuclideans_hex,
+        labs_to_rgb,
         rgbs_to_lab,
     )
 
@@ -104,6 +107,7 @@ if numpy:
         "hexs_to_rgb",
         "hsls_to_rgb",
         "hsvs_to_rgb",
+        "labs_to_rgb",
         "rgbs_to_hex",
         "rgbs_to_hsl",
         "rgbs_to_hsv",

@@ -132,11 +132,11 @@ If you have numpy installed in your Python environment, basic_colormath will pro
 | hex_to_rgb                    | hexs_to_rgb                   |                            |
 | hsl_to_rgb                    | hsls_to_rgb                   |                            |
 | hsv_to_rgb                    | hsvs_to_rgb                   |                            |
+| lab_to_rgb                    | labs_to_rgb                   |                            |
 | rgb_to_hex                    | rgbs_to_hex                   |                            |
 | rgb_to_hsl                    | rgbs_to_hsl                   |                            |
 | rgb_to_hsv                    | rgbs_to_hsv                   |                            |
 | rgb_to_lab                    | rgbs_to_lab                   |                            |
-| lab_to_rgb                    | labs_to_rgb                   |                            |
 | mix_hex                       |                               |                            |
 | mix_rgb                       |                               |                            |
 | scale_hex                     |                               |                            |
