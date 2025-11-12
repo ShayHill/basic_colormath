@@ -73,8 +73,42 @@ def _rgbs_to_xyz(rgbs: _FloatArray) -> _FloatArray:
     ) ** _XYZ_LRG_VAL_EXPONENT
     return cast(
         "_FloatArray",
-        np.tensordot(linear_channels, _RGB_TO_XYZ, axes=([-1], [1])),  # pyright: ignore[reportUnknownMemberType]
+        np.tensordot(  # pyright: ignore[reportUnknownMemberType]
+            linear_channels, _RGB_TO_XYZ, axes=([-1], [1])
+        ),
     )
+
+
+_XYZ_TO_RGB = [
+    [3.24070846, -1.53725917, -0.49857039],
+    [-0.96925735, 1.87599516, 0.04155555],
+    [0.05563507, -0.2039958, 1.05706957],
+]
+
+
+def _xyzs_to_rgb(xyzs: _FloatArray) -> _FloatArray:
+    """
+    XYZ to RGB conversion.
+    :param xyzs: an array (..., 3) of X, Y, and Z values
+    :return: array (..., 3) of red, green, blue values in [0, 255]
+    """
+    linear_channels = cast(
+        "_FloatArray",
+        np.tensordot(  # pyright: ignore[reportUnknownMemberType]
+            xyzs, _XYZ_TO_RGB, axes=([-1], [1])
+        ),
+    )
+    threshold_linear = _XYZ_NORMALIZATION_THRESHOLD / _XYZ_SML_VAL_DENOMINATOR
+    lo_mask = linear_channels <= threshold_linear
+    hi_mask = ~lo_mask
+
+    rgb = np.copy(linear_channels)
+    rgb[lo_mask] = rgb[lo_mask] * _XYZ_SML_VAL_DENOMINATOR
+    rgb[hi_mask] = (
+        _XYZ_LRG_VAL_DENOMINATOR * (rgb[hi_mask] ** (1 / _XYZ_LRG_VAL_EXPONENT))
+        - _XYZ_LRG_VAL_OFFSET
+    )
+    return rgb
 
 
 _CIE_E = 216 / 24389
@@ -108,6 +142,37 @@ def _xyzs_to_lab(xyzs: _FloatArray) -> _FloatArray:
     return lab
 
 
+def _labs_to_xyz(labs: _FloatArray) -> _FloatArray:
+    """
+    Lab to XYZ conversion.
+    :param labs: an array (..., 3) of Lab values
+    :return: array (..., 3) of XYZ values
+    """
+    lab_l = labs[..., 0]
+    lab_a = labs[..., 1]
+    lab_b = labs[..., 2]
+
+    fy = (lab_l + 16.0) / 116
+    fx = fy + (lab_a / 500)
+    fz = fy - (lab_b / 200)
+
+    # Inverse f function (piecewise)
+    def inv_f(t: _FloatArray) -> _FloatArray:
+        # shape will be broadcasted for any array t
+        t_cubed = t**3
+        mask = t_cubed > _CIE_E
+        result = np.empty_like(t)
+        result[mask] = t_cubed[mask]
+        result[~mask] = (t[~mask] - _16_116THS) / 7.787
+        return result
+
+    x = inv_f(fx) * _XYZ_ILLUM[0]
+    y = inv_f(fy) * _XYZ_ILLUM[1]
+    z = inv_f(fz) * _XYZ_ILLUM[2]
+    xyzs = np.stack([x, y, z], axis=-1)
+    return xyzs
+
+
 def rgbs_to_lab(rgbs: npt.ArrayLike) -> _FloatArray:
     """Convert RGB to Lab.
 
@@ -118,6 +183,16 @@ def rgbs_to_lab(rgbs: npt.ArrayLike) -> _FloatArray:
     """
     xyzs = _rgbs_to_xyz(np.asarray(rgbs, dtype=np.float64))
     return _xyzs_to_lab(xyzs)
+
+
+def labs_to_rgb(labs: npt.ArrayLike) -> _FloatArray:
+    """Convert Lab to RGB.
+
+    :param labs: an array (..., 3) of Lab values
+    :return: an array (..., 3) of red, green, and blue values in [0, 255]
+    """
+    xyzs = _labs_to_xyz(np.asarray(labs, dtype=np.float64))
+    return _xyzs_to_rgb(xyzs)
 
 
 def hexs_to_lab(hexs: npt.ArrayLike) -> _FloatArray:
