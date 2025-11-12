@@ -7,7 +7,7 @@ license = "MIT"
 authors = [
     { name = "Shay Hill", email = "shay_public@hotmail.com" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = []
 
 [build-system]
@@ -54,7 +54,6 @@ pythonVersion = "3.10"
 pythonPlatform = "Any"
 
 typeCheckingMode = "strict"
-reportShadowedImports = true
 reportCallInDefaultInitializer = true
 reportImplicitStringConcatenation = true
 # reportMissingSuperCall = true

@@ -4,8 +4,6 @@
 :created: 2024-08-22
 """
 
-from __future__ import annotations
-
 from typing import Any, TypeVar, cast
 
 import numpy as np

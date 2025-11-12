@@ -4,14 +4,10 @@
 :created: 2023-04-30
 """
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Union
+from typing import Union
 
 from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
-
-if TYPE_CHECKING:
-    from basic_colormath.type_hints import Hex, Rgb, RgbLike
+from basic_colormath.type_hints import Hex, Rgb, RgbLike
 
 _Ratio = Union[float, "tuple[float, ...]", None]
 
@@ -84,8 +80,8 @@ def mix_rgb(*rgb_args: RgbLike, ratio: _Ratio = None) -> Rgb:
     :return: rgb tuple ([0, 255], [0, 255], [0, 255])
     """
     ps = _infer_ps(ratio, len(rgb_args))
-    scaled_rgbs = [scale_rgb(rgb, p) for rgb, p in zip(rgb_args, ps)]
-    red, grn, blu = (sum(i) for i in zip(*scaled_rgbs))
+    scaled_rgbs = [scale_rgb(rgb, p) for rgb, p in zip(rgb_args, ps, strict=True)]
+    red, grn, blu = (sum(i) for i in zip(*scaled_rgbs, strict=True))
     return (red, grn, blu)
 
 

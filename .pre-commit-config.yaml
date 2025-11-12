@@ -41,10 +41,10 @@ repos:
         # files: .pre-commit-config.yaml
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.20.0
+  rev: v3.21.1
   hooks:
   - args:
-    - --py39-plus
+    - --py310-plus
     id: pyupgrade
 
 - repo: https://github.com/Lucas-C/pre-commit-hooks
@@ -64,12 +64,12 @@ repos:
   # N802 function name should be lowercase
   # N803 argument name should be lowercase
   # ICN001 import numpy as np
-  rev: 'v0.13.3'
+  rev: 'v0.14.4'
   hooks:
     - id: ruff
       exclude: "tests"
       args:
-      - --target-version=py39
+      - --target-version=py310
       - --select=ALL
       - --ignore=COM812,D203,D213,ISC003,FLY,N806,N802,N803,ICN001
       - --fix
@@ -81,6 +81,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.406
+  rev: v1.1.407
   hooks:
     - id: pyright

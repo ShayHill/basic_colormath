@@ -28,10 +28,9 @@ f(d, x), f(d, y), f(d, z)
 :created: 2024-08-22
 """
 
-from __future__ import annotations
-
 import math
-from typing import Callable
+from collections.abc import Callable
+from typing import cast
 
 import numpy as np
 from numpy import typing as npt
@@ -72,7 +71,10 @@ def _rgbs_to_xyz(rgbs: _FloatArray) -> _FloatArray:
     linear_channels[hi_idxs] = (
         (linear_channels[hi_idxs] + _XYZ_LRG_VAL_OFFSET) / _XYZ_LRG_VAL_DENOMINATOR
     ) ** _XYZ_LRG_VAL_EXPONENT
-    return np.tensordot(linear_channels, _RGB_TO_XYZ, axes=([-1], [1]))
+    return cast(
+        "_FloatArray",
+        np.tensordot(linear_channels, _RGB_TO_XYZ, axes=([-1], [1])),  # pyright: ignore[reportUnknownMemberType]
+    )
 
 
 _CIE_E = 216 / 24389

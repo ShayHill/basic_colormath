@@ -4,8 +4,6 @@
 :created: 2023-04-30
 """
 
-from __future__ import annotations
-
 import random
 from typing import Any
 

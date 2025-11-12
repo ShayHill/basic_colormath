@@ -33,15 +33,10 @@ Intermediate color formats are 3-tuples with the following ranges:
 :created: 2023-04-29
 """
 
-from __future__ import annotations
-
 import math
-from typing import TYPE_CHECKING
 
 from basic_colormath.conversion import hex_to_rgb
-
-if TYPE_CHECKING:
-    from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike
+from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike
 
 _Triple = tuple[float, float, float]
 
@@ -78,7 +73,8 @@ def _rgb_to_xyz(rgb: RgbLike) -> _Triple:
         linear_channels.append(linear_channel)
 
     result_matrix = [
-        sum(x * y for x, y in zip(row, linear_channels)) for row in _RGB_TO_XYZ
+        sum(x * y for x, y in zip(row, linear_channels, strict=True))
+        for row in _RGB_TO_XYZ
     ]
     rgb_r, rgb_g, rgb_b = (max(c, 0) for c in result_matrix)
     return rgb_r, rgb_g, rgb_b
@@ -99,7 +95,7 @@ def _xyz_to_lab(xyz: _Triple) -> Lab:
     :param xyz: XYZ color tuple
     :return: Lab color tuple
     """
-    scaled_xyz = [c / y for c, y in zip(xyz, _XYZ_ILLUM)]
+    scaled_xyz = [c / y for c, y in zip(xyz, _XYZ_ILLUM, strict=True)]
     for i, channel in enumerate(scaled_xyz):
         if channel > _CIE_E:
             scaled_xyz[i] = channel**_1_3RD
@@ -221,7 +217,9 @@ def get_sqeuclidean(rgb_a: RgbLike, rgb_b: RgbLike) -> float:
     :param rgb_b: The second RGB color.
     :return: The squared Euclidean distance between the two RGB colors.
     """
-    return sum((a - b) ** 2 for a, b in zip(map(float, rgb_a), map(float, rgb_b)))
+    return sum(
+        (a - b) ** 2 for a, b in zip(map(float, rgb_a), map(float, rgb_b), strict=True)
+    )
 
 
 def get_sqeuclidean_hex(hex_a: Hex, hex_b: Hex) -> float:

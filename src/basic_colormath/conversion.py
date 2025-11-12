@@ -10,14 +10,9 @@ That conversion is in the distance.py module.
 :created: 2023-04-30
 """
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
+from basic_colormath.type_hints import Hex, Hsl, HslLike, Hsv, HsvLike, Rgb, RgbLike
 
 _MAX_8BIT = 255
-
-if TYPE_CHECKING:
-    from basic_colormath.type_hints import Hex, Hsl, HslLike, Hsv, HsvLike, Rgb, RgbLike
 
 
 def _get_hue_from_rgb(rgb: RgbLike, min_: float, max_: float) -> float:
