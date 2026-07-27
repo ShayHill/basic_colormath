@@ -36,7 +36,7 @@ Intermediate color formats are 3-tuples with the following ranges:
 import math
 
 from basic_colormath.conversion import hex_to_rgb
-from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike, Rgb
+from basic_colormath.type_hints import Hex, Lab, LabLike, Rgb, RgbLike
 
 _Triple = tuple[float, float, float]
 
@@ -182,6 +182,7 @@ def rgb_to_lab(rgb: RgbLike) -> Lab:
     """
     xyz = _rgb_to_xyz(rgb)
     return _xyz_to_lab(xyz)
+
 
 def lab_to_rgb(lab: LabLike) -> Rgb:
     """Convert Lab to RGB.
@@ -336,7 +337,6 @@ def get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
 
 
 if __name__ == "__main__":
-
     import random
 
     for _i in range(1000):
