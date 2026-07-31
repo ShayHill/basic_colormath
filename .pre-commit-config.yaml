@@ -1,5 +1,5 @@
 ci:
-  skip: [pyright]
+  skip: [basedpyright]
 
 exclude: "typings|tests"
 
