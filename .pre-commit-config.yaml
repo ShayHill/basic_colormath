@@ -42,9 +42,6 @@ repos:
   rev: v2.3.0
   hooks:
   - id: mypy
-    name: mypy
-    language: python
-    language_version: python 3.10
     types: [python]
     require_serial: true
     verbose: true
