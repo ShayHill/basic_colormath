@@ -7,7 +7,7 @@
 # Numpy is an optional dependency. If it's not installed, the numpy functions will
 # not be available.
 try:
-    import numpy
+    import numpy  # noqa: ICN001
 except ImportError:
     numpy = None
 

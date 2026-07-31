@@ -3,24 +3,37 @@ name = "basic-colormath"
 version = "1.1.1"
 description = "Simple color conversion and perceptual (DeltaE CIE 2000) difference"
 readme = "README.md"
+license-files = ["LICENSE"]
 license = "MIT"
 authors = [
     { name = "Shay Hill", email = "shay_public@hotmail.com" }
 ]
 requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
 dependencies = []
 
 [build-system]
 requires = ["uv_build>=0.9.4,<0.10.0"]
 build-backend = "uv_build"
 
-
 [dependency-groups]
 dev = [
-    "commitizen>=4.10.0",
-    "pre-commit>=4.3.0",
-    "pytest>=8.4.2",
-    "colormath"
+    "colormath",
+    "commitizen",
+    "numpy",
+    "pre-commit",
+    "pytest",
+
 ]
 extra = ["numpy"]
 
@@ -28,7 +41,7 @@ extra = ["numpy"]
 name = "cz_conventional_commits"
 version = "1.1.1"
 tag_format = "$version"
-major-version-zero = false
+major-version-zero = true
 version_files = ["pyproject.toml:^version"]
 
 
@@ -38,25 +51,62 @@ profile = "black"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules"
-pythonpath = ["tests"]
-log_cli = 1
+pythonpath = "tests"
+testpaths = ["tests"]
+log_cli = true
 
 
+[tool.ruff]
+target-version = "py310"
+exclude = ["typings", ".venv"]
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
 
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+    "S101",
+    "D",
+    "F401",
+] # Ignore assertions, docstrings, unused imports in test files
+
+[tool.ruff.format]
+docstring-code-line-length = 88
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint.isort]
+# keep isort consistent with format.skip-magic-trailing-comma
+split-on-trailing-comma = false
+
+[tool.ruff.lint]
+select = ["ALL"]
+# only auto-fix __all__ sorting (RUF022) and import sorting (I)
+fixable = ["RUF022", "I"]
+ignore = [
+    "COM812",  # trailing comma missing (does not agree with Black)
+    "D203",    # 1 blank line before class docstring (incompatible with D211)
+    "D213",    # multi-line summary second line (incompatible with D212)
+    "ISC003",  # explicitly concatenated string should be implicit
+    "FLY",     # Use f-string instead of ...
+    "S311",    # Standard pseudo-random generators are not suitable for security/cryptographic purposes
+    "S301",    # don't use pickle
+    "CPY001",  # copyrite notice should be present in each file
+    "N802",    # function name should be lowercase
+    "N803",    # argument name should be lowercase
+    "N806",    # variable in function should be lowercase
+]
+
 
 [tool.pyright]
-include = ["src"]
+include = ["src", "tests"]
 exclude = ["**/__pycache__.py"]
+ignore = ["typings", ".venv"]
 
 pythonVersion = "3.10"
-pythonPlatform = "Any"
+pythonPlatform = "All"
 
 typeCheckingMode = "strict"
 reportCallInDefaultInitializer = true
 reportImplicitStringConcatenation = true
-# reportMissingSuperCall = true
 reportPropertyTypeMismatch = true
 reportUninitializedInstanceVariable = true
 reportUnnecessaryTypeIgnoreComment = true
@@ -64,3 +114,6 @@ reportUnusedCallResult = true
 
 venvPath = "."
 venv = "./.venv"
+
+[[tool.pyright.executionEnvironments]]
+root = "tests"

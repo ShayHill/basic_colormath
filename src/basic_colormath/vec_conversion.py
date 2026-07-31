@@ -4,15 +4,15 @@
 :created: 2024-08-22
 """
 
-from typing import Any, TypeVar, cast
+from typing import Any, TypeAlias, TypeVar, cast
 
 import numpy as np
 from numpy import typing as npt
 
 from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
 
-_FloatArray = npt.NDArray[np.float64]
-_Uint8Array = npt.NDArray[np.uint8]
+_FloatArray: TypeAlias = npt.NDArray[np.float64]
+_Uint8Array: TypeAlias = npt.NDArray[np.uint8]
 _TArray = TypeVar("_TArray", bound=npt.NDArray[Any])
 
 _MAX_8BIT = 255

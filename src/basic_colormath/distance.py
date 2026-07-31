@@ -36,7 +36,7 @@ Intermediate color formats are 3-tuples with the following ranges:
 import math
 
 from basic_colormath.conversion import hex_to_rgb
-from basic_colormath.type_hints import Hex, Lab, LabLike, RgbLike, Rgb
+from basic_colormath.type_hints import Hex, Lab, LabLike, Rgb, RgbLike
 
 _Triple = tuple[float, float, float]
 
@@ -89,9 +89,11 @@ _XYZ_TO_RGB = [
 
 
 def _xyz_to_rgb(xyz: _Triple) -> _Triple:
-    """Inverse of _rgb_to_xyz. Converts XYZ [0..1] to RGB [0..255]"""
+    """Return inverse of _rgb_to_xyz. Converts XYZ [0..1] to RGB [0..255]."""
     # Matrix multiply (the inverse matrix)
-    linear_channels = [sum(x * y for x, y in zip(row, xyz)) for row in _XYZ_TO_RGB]
+    linear_channels = [
+        sum(x * y for x, y in zip(row, xyz, strict=True)) for row in _XYZ_TO_RGB
+    ]
     # Invert the channel normalization
     rgb: list[float] = []
     threshold_linear = _XYZ_NORMALIZATION_THRESHOLD / _XYZ_SML_VAL_DENOMINATOR
@@ -154,8 +156,7 @@ def _lab_to_xyz(lab: LabLike) -> _Triple:
     def inv_f(t: float) -> float:
         if t**3 > _CIE_E:
             return t**3
-        else:
-            return (t - _16_116THS) / 7.787
+        return (t - _16_116THS) / 7.787
 
     x = inv_f(fx) * _XYZ_ILLUM[0]
     y = inv_f(fy) * _XYZ_ILLUM[1]
@@ -182,6 +183,7 @@ def rgb_to_lab(rgb: RgbLike) -> Lab:
     """
     xyz = _rgb_to_xyz(rgb)
     return _xyz_to_lab(xyz)
+
 
 def lab_to_rgb(lab: LabLike) -> Rgb:
     """Convert Lab to RGB.
@@ -333,18 +335,3 @@ def get_delta_e_hex(hex_a: Hex, hex_b: Hex) -> float:
     :return: The Delta E (CIE 2000) between the two hex colors.
     """
     return get_delta_e_lab(hex_to_lab(hex_a), hex_to_lab(hex_b))
-
-
-if __name__ == "__main__":
-
-    import random
-
-    for _i in range(1000):
-        rgb = (
-            random.uniform(0, 255),
-            random.uniform(0, 255),
-            random.uniform(0, 255),
-        )
-        lab = rgb_to_lab(rgb)
-        rgb_back = lab_to_rgb(lab)
-        assert all(abs(a - b) < 0.01 for a, b in zip(rgb, rgb_back, strict=True))

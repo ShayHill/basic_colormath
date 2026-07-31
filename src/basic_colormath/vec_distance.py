@@ -30,14 +30,14 @@ f(d, x), f(d, y), f(d, z)
 
 import math
 from collections.abc import Callable
-from typing import cast
+from typing import TypeAlias, cast
 
 import numpy as np
 from numpy import typing as npt
 
 from basic_colormath.vec_conversion import hexs_to_rgb
 
-_FloatArray = npt.NDArray[np.float64]
+_FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 _RGB_TO_XYZ = [
     [0.412424, 0.357579, 0.180464],
@@ -72,10 +72,7 @@ def _rgbs_to_xyz(rgbs: _FloatArray) -> _FloatArray:
         (linear_channels[hi_idxs] + _XYZ_LRG_VAL_OFFSET) / _XYZ_LRG_VAL_DENOMINATOR
     ) ** _XYZ_LRG_VAL_EXPONENT
     return cast(
-        "_FloatArray",
-        np.tensordot(  # pyright: ignore[reportUnknownMemberType]
-            linear_channels, _RGB_TO_XYZ, axes=([-1], [1])
-        ),
+        "_FloatArray", np.tensordot(linear_channels, _RGB_TO_XYZ, axes=([-1], [1]))
     )
 
 
@@ -87,16 +84,13 @@ _XYZ_TO_RGB = [
 
 
 def _xyzs_to_rgb(xyzs: _FloatArray) -> _FloatArray:
-    """
-    XYZ to RGB conversion.
+    """Convert XYZ to RGB.
+
     :param xyzs: an array (..., 3) of X, Y, and Z values
     :return: array (..., 3) of red, green, blue values in [0, 255]
     """
     linear_channels = cast(
-        "_FloatArray",
-        np.tensordot(  # pyright: ignore[reportUnknownMemberType]
-            xyzs, _XYZ_TO_RGB, axes=([-1], [1])
-        ),
+        "_FloatArray", np.tensordot(xyzs, _XYZ_TO_RGB, axes=([-1], [1]))
     )
     threshold_linear = _XYZ_NORMALIZATION_THRESHOLD / _XYZ_SML_VAL_DENOMINATOR
     lo_mask = linear_channels <= threshold_linear
@@ -143,8 +137,8 @@ def _xyzs_to_lab(xyzs: _FloatArray) -> _FloatArray:
 
 
 def _labs_to_xyz(labs: _FloatArray) -> _FloatArray:
-    """
-    Lab to XYZ conversion.
+    """Convert Lab to XYZ.
+
     :param labs: an array (..., 3) of Lab values
     :return: array (..., 3) of XYZ values
     """
@@ -169,8 +163,7 @@ def _labs_to_xyz(labs: _FloatArray) -> _FloatArray:
     x = inv_f(fx) * _XYZ_ILLUM[0]
     y = inv_f(fy) * _XYZ_ILLUM[1]
     z = inv_f(fz) * _XYZ_ILLUM[2]
-    xyzs = np.stack([x, y, z], axis=-1)
-    return xyzs
+    return np.stack([x, y, z], axis=-1)
 
 
 def rgbs_to_lab(rgbs: npt.ArrayLike) -> _FloatArray:

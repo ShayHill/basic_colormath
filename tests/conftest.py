@@ -5,18 +5,18 @@
 """
 
 import random
-from typing import Any
 
 import pytest
 
 
 def pytest_assertrepr_compare(
-    config: Any, op: str, left: str, right: str
+    config: pytest.Config, op: str, left: str, right: str
 ) -> list[str] | None:
     """See full error diffs"""
     del config
     if op in ("==", "!="):
         return [f"{left} {op} {right}"]
+    return None
 
 
 @pytest.fixture(scope="module", params=range(100))

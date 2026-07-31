@@ -1,7 +1,7 @@
 ci:
   skip: [pyright]
 
-exclude: "tests"
+exclude: "typings|tests"
 
 repos:
 
@@ -37,50 +37,41 @@ repos:
     - id: no-commit-to-branch
     - id: pretty-format-json
       args: ['--autofix']
-    # - id: sort-simple-yaml
-        # files: .pre-commit-config.yaml
+
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v2.3.0
+  hooks:
+  - id: mypy
+    name: mypy
+    language: python
+    language_version: python 3.10
+    types: [python]
+    require_serial: true
+    verbose: true
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.21.1
+  rev: v3.21.2
   hooks:
   - args:
     - --py310-plus
     id: pyupgrade
 
 - repo: https://github.com/Lucas-C/pre-commit-hooks
-  rev: v1.5.5
+  rev: v1.5.6
   hooks:
   - id: remove-tabs
 
+# ruff config (select/ignore/fixable/target-version) lives in pyproject.toml
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  # ignores
-  # COM812 Trailing comma missing (does not agree with Black)
-  # D203 1 blank line required before class docstring (incompatible with D211)
-  # D213 multi line summary second line (incompatible with D212):
-  # ISC003 Explicitly concatenated string should be implicitly concatenated
-  # FLY Use f-string instead of ...
-  #
-  # N806 Variable in function should be lowercase
-  # N802 function name should be lowercase
-  # N803 argument name should be lowercase
-  # ICN001 import numpy as np
-  rev: 'v0.14.4'
+  rev: 'v0.16.1'
   hooks:
     - id: ruff
-      exclude: "tests"
-      args:
-      - --target-version=py310
-      - --select=ALL
-      - --ignore=COM812,D203,D213,ISC003,FLY,N806,N802,N803,ICN001
-      - --fix
-      - --fixable=RUF022
-    - id: ruff
-      args: ["check", "--select", "I", "--fix"]
+      args: ["--fix"]
     - id: ruff-format
       name: "ruff-format"
 
-# reads pyproject.toml for additional config
-- repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.407
+# basedpyright config (select/ignore/fixable/target-version) lives in pyproject.toml
+- repo: https://github.com/DetachHead/basedpyright-pre-commit-mirror
+  rev: 1.39.9
   hooks:
-    - id: pyright
+    - id: basedpyright
