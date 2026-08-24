@@ -39,7 +39,7 @@ repos:
       args: ['--autofix']
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v2.3.0
+  rev: v2.3.1
   hooks:
   - id: mypy
     types: [python]
@@ -59,8 +59,8 @@ repos:
   - id: remove-tabs
 
 # ruff config (select/ignore/fixable/target-version) lives in pyproject.toml
-- repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: 'v0.16.1'
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: 'v0.16.4'
   hooks:
     - id: ruff
       args: ["--fix"]
@@ -69,6 +69,6 @@ repos:
 
 # basedpyright config (select/ignore/fixable/target-version) lives in pyproject.toml
 - repo: https://github.com/DetachHead/basedpyright-pre-commit-mirror
-  rev: 1.39.9
+  rev: 1.39.10
   hooks:
     - id: basedpyright
