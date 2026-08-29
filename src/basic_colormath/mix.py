@@ -9,7 +9,7 @@ from typing import Union
 from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
 from basic_colormath.type_hints import Hex, Rgb, RgbLike
 
-_Ratio = Union[float, "tuple[float, ...]", None]
+Ratio = Union[float, "tuple[float, ...]", None]
 
 
 def _split_float(f: float, num: int) -> tuple[float, ...]:
@@ -19,10 +19,13 @@ def _split_float(f: float, num: int) -> tuple[float, ...]:
     :param num: number of parts
     :return: tuple of floats
     """
+    f = max(0, f)
+    if num == 0:
+        return ()
     return (f / num,) * num
 
 
-def _infer_ps(ratio: float | tuple[float, ...] | None, num: int) -> tuple[float, ...]:
+def infer_ps(ratio: float | tuple[float, ...] | None, num: int) -> tuple[float, ...]:
     """Infer p values from a single float or tuple of floats.
 
     :param ratios: float or tuple of floats
@@ -48,14 +51,17 @@ def _infer_ps(ratio: float | tuple[float, ...] | None, num: int) -> tuple[float,
     if len(ratio) > num:
         msg = f"ratios has {len(ratio)} elements, but only <= {num} are allowed"
         raise ValueError(msg)
+
     sum_ratios = sum(ratio)
     missing = num - len(ratio)
-    if sum_ratios == 0 and missing == 0:
+    filled = ratio + _split_float(1 - sum_ratios, missing)
+    sum_ratios = sum(filled)
+    if sum_ratios <= 0:
         msg = f"ratios must sum to > 0, not {sum_ratios}"
         raise ValueError(msg)
-    if sum_ratios >= 1:
-        return tuple(r / sum_ratios for r in ratio) + _split_float(0, missing)
-    return ratio + _split_float(1 - sum_ratios, missing)
+    if sum_ratios == 1:
+        return filled
+    return tuple(r / sum_ratios for r in filled)
 
 
 def scale_rgb(rgb: RgbLike, scalar: float) -> Rgb:
@@ -69,7 +75,7 @@ def scale_rgb(rgb: RgbLike, scalar: float) -> Rgb:
     return red, grn, blu
 
 
-def mix_rgb(*rgb_args: RgbLike, ratio: _Ratio = None) -> Rgb:
+def mix_rgb(*rgb_args: RgbLike, ratio: Ratio = None) -> Rgb:
     """Mix any number of rgb tuples.
 
     :param rgb_args: rgb tuples ([0, 255], [0, 255], [0, 255])
@@ -79,7 +85,7 @@ def mix_rgb(*rgb_args: RgbLike, ratio: _Ratio = None) -> Rgb:
         ratios will be equal.
     :return: rgb tuple ([0, 255], [0, 255], [0, 255])
     """
-    ps = _infer_ps(ratio, len(rgb_args))
+    ps = infer_ps(ratio, len(rgb_args))
     scaled_rgbs = [scale_rgb(rgb, p) for rgb, p in zip(rgb_args, ps, strict=True)]
     red, grn, blu = (sum(i) for i in zip(*scaled_rgbs, strict=True))
     return (red, grn, blu)
@@ -95,7 +101,7 @@ def scale_hex(hex_: Hex, scalar: float) -> Hex:
     return rgb_to_hex(scale_rgb(hex_to_rgb(hex_), scalar))
 
 
-def mix_hex(*hex_args: Hex, ratio: _Ratio = None) -> Hex:
+def mix_hex(*hex_args: Hex, ratio: Ratio = None) -> Hex:
     """Mix any number of hex colors.
 
     :param hex_args: hex colors with or without leading #

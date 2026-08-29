@@ -32,7 +32,6 @@ class TestMixRGB:
             _ = mix.mix_rgb((255, 255, 255), (0, 0, 0), ratio=-1 / 255)
 
     def test_zero_float_ratio(self) -> None:
-        """Weight of first arg is 0, others 1"""
         with pytest.raises(ValueError, match="ratios must be >= 0"):
             _ = mix.mix_rgb((255, 255, 255), (0, 0, 0), ratio=-1 / 255)
 
@@ -48,6 +47,18 @@ class TestMixRGB:
         """Raise value error if a ratio is given for all colors and they sum to zero"""
         with pytest.raises(ValueError, match="ratios must sum to > 0"):
             _ = mix.mix_rgb((255, 255, 255), (0, 0, 0), ratio=(0, 0))
+
+    def test_one_zero_but_sufficient_args_to_fill(self) -> None:
+        result = mix.mix_rgb((255, 255, 255), (0, 0, 0), (1, 1, 1), ratio=0)
+        assert result == (0.5, 0.5, 0.5)
+
+    def test_exactly_enough_ratios_but_sum_to_less_than_one(self) -> None:
+        result = mix.mix_rgb((1, 1, 1), (1, 1, 1), ratio=(0.5, 0.25))
+        assert result == (1, 1, 1)
+
+    def test_exactly_enough_ratios_but_sum_to_more_than_one(self) -> None:
+        result = mix.mix_rgb((1, 1, 1), (1, 1, 1), ratio=(2, 1))
+        assert result == (1, 1, 1)
 
     def test_ratios_sum_to_zero_more_args(self) -> None:
         """Allow if ratios sum to zero, but args remain for more colors"""
