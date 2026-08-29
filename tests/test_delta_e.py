@@ -4,15 +4,22 @@
 :created: 2023-04-29
 """
 
+# pyright: reportMissingTypeStubs=false
+# pyright: reportUnknownMemberType=false
+# pyright: reportUnknownVariableType=false
+# pyright: reportExplicitAny=false
+
 import random
-from typing import Any, Tuple, cast
+import sys
+import time
+from typing import Any, cast
 
 import numpy as np
 import numpy.typing as npt
 import pytest
-from colormath.color_conversions import convert_color  # type: ignore
-from colormath.color_diff import delta_e_cie2000  # type: ignore
-from colormath.color_objects import LabColor, XYZColor, sRGBColor  # type: ignore
+from colormath.color_conversions import convert_color
+from colormath.color_diff import delta_e_cie2000
+from colormath.color_objects import LabColor, sRGBColor
 
 from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
 from basic_colormath.distance import (
@@ -39,21 +46,21 @@ def _patch_asscalar(a: npt.NDArray[np.float64]) -> float:
     return a.item()
 
 
-np.asscalar = _patch_asscalar  # type: ignore
+np.asscalar = _patch_asscalar  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def _colormath_delta_e(
-    rgb_a: Tuple[float, float, float], rgb_b: Tuple[float, float, float]
+    rgb_a: tuple[float, float, float], rgb_b: tuple[float, float, float]
 ) -> float:
-    srgb_a = cast(Any, sRGBColor(*rgb_a, is_upscaled=True))
-    srgb_b = cast(Any, sRGBColor(*rgb_b, is_upscaled=True))
-    lab_a = cast(Any, convert_color(srgb_a, LabColor))
-    lab_b = cast(Any, convert_color(srgb_b, LabColor))
-    return cast(float, delta_e_cie2000(lab_a, lab_b))
+    srgb_a = cast("Any", sRGBColor(*rgb_a, is_upscaled=True))
+    srgb_b = cast("Any", sRGBColor(*rgb_b, is_upscaled=True))
+    lab_a = convert_color(srgb_a, LabColor)
+    lab_b = convert_color(srgb_b, LabColor)
+    return cast("float", delta_e_cie2000(lab_a, lab_b))
 
 
 @pytest.fixture(scope="module", params=range(100))
-def rgb_pair() -> Tuple[Tuple[int, int, int], Tuple[int, int, int]]:
+def rgb_pair() -> tuple[tuple[int, int, int], tuple[int, int, int]]:
     """Return a pair of random rgb tuples."""
     red1, grn1, blu1 = (random.randint(0, 255) for _ in range(3))
     red2, grn2, blu2 = (random.randint(0, 255) for _ in range(3))
@@ -62,8 +69,8 @@ def rgb_pair() -> Tuple[Tuple[int, int, int], Tuple[int, int, int]]:
 
 class TestDeltaE:
     def test_compare_rgb_to_colormath(
-        self, rgb_pair: Tuple[Tuple[float, float, float], Tuple[float, float, float]]
-    ):
+        self, rgb_pair: tuple[tuple[float, float, float], tuple[float, float, float]]
+    ) -> None:
         """Test that our delta-e is close to colormath's delta-e."""
         rgb_a, rgb_b = rgb_pair
         colormath_delta_e = _colormath_delta_e(rgb_a, rgb_b)
@@ -71,8 +78,8 @@ class TestDeltaE:
         assert abs(colormath_delta_e - our_delta_e) < 0.0001
 
     def test_compare_hex_to_colormath(
-        self, rgb_pair: Tuple[Tuple[float, float, float], Tuple[float, float, float]]
-    ):
+        self, rgb_pair: tuple[tuple[float, float, float], tuple[float, float, float]]
+    ) -> None:
         """Test that our delta-e is close to colormath's delta-e."""
         hex_a, hex_b = rgb_to_hex(rgb_pair[0]), rgb_to_hex(rgb_pair[1])
         rgb_a, rgb_b = hex_to_rgb(hex_a), hex_to_rgb(hex_b)
@@ -83,51 +90,50 @@ class TestDeltaE:
 
 
 class TestEuclideanDistance:
-    def test_known_sqeuclidean(self):
+    def test_known_sqeuclidean(self) -> None:
         """Test that our euclidean distance is correct."""
         assert get_sqeuclidean((0, 0, 0), (1, 1, 1)) == 3
         assert get_sqeuclidean((0, 0, 0), (1, 2, 1)) == 6
 
-    def test_known_euclidean(self):
+    def test_known_euclidean(self) -> None:
         """Test that our euclidean distance is correct."""
         assert np.isclose(get_euclidean((0, 0, 0), (1, 1, 1)), 3**0.5)
         assert np.isclose(get_euclidean((0, 0, 0), (1, 2, 1)), 6**0.5)
 
     def test_hext_vs_rgb(
-        self, rgb_pair: Tuple[Tuple[float, float, float], Tuple[float, float, float]]
-    ):
+        self, rgb_pair: tuple[tuple[float, float, float], tuple[float, float, float]]
+    ) -> None:
         """Test that our euclidean distance is correct."""
         hex_a, hex_b = rgb_to_hex(rgb_pair[0]), rgb_to_hex(rgb_pair[1])
         rgb_a, rgb_b = hex_to_rgb(hex_a), hex_to_rgb(hex_b)
         assert get_euclidean(rgb_a, rgb_b) == get_euclidean_hex(hex_a, hex_b)
 
 
-def _compare_speed():
+def _compare_speed() -> None:
     """Compare the speed of our delta-e to colormath's delta-e."""
-    import time
 
     count = 10000
     rgb_as = [tuple(random.randint(0, 255) for _ in range(3)) for _ in range(count)]
     rgb_bs = [tuple(random.randint(0, 255) for _ in range(3)) for _ in range(count)]
 
     beg = time.time()
-    for rgb_a, rgb_b in zip(rgb_as, rgb_bs):
+    for rgb_a, rgb_b in zip(rgb_as, rgb_bs, strict=True):
         ra, ga, ba = rgb_a
         rb, gb, bb = rgb_b
         _ = _colormath_delta_e((ra, ga, ba), (rb, gb, bb))
     end = time.time()
     colormath_time = end - beg
-    print(f"colormath: {colormath_time}")
+    _ = sys.stdout.write(f"colormath: {colormath_time}\n")
     beg = time.time()
-    for rgb_a, rgb_b in zip(rgb_as, rgb_bs):
+    for rgb_a, rgb_b in zip(rgb_as, rgb_bs, strict=True):
         ra, ga, ba = rgb_a
         rb, gb, bb = rgb_b
         _ = get_delta_e((ra, ga, ba), (rb, gb, bb))
     end = time.time()
     our_time = end - beg
-    print(f"delta_e: {our_time}")
+    _ = sys.stdout.write(f"delta_e: {our_time}\n")
 
-    print(f"speedup: {colormath_time / our_time}")
+    _ = sys.stdout.write(f"speedup: {colormath_time / our_time}\n")
 
 
 if __name__ == "__main__":

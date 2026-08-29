@@ -4,6 +4,7 @@
 :created: 2023-04-30
 """
 
+# pyright: reportMissingTypeStubs=false
 # pyright: reportPrivateUsage=false
 # pyright: reportUnknownMemberType=false
 # pyright: reportUnknownVariableType=false
@@ -11,12 +12,12 @@
 
 import colorsys
 import random
-from typing import Tuple
+from typing import cast
 
 import numpy as np
 import pytest
-from colormath.color_conversions import convert_color  # type: ignore
-from colormath.color_objects import HSLColor, HSVColor, sRGBColor  # type: ignore
+from colormath.color_conversions import convert_color
+from colormath.color_objects import HSLColor, HSVColor, sRGBColor
 
 from basic_colormath.conversion import (
     _get_hue_from_rgb,
@@ -31,14 +32,14 @@ from basic_colormath.conversion import (
 )
 
 
-def get_hue(rgb: Tuple[float, float, float]) -> float:
+def get_hue(rgb: tuple[float, float, float]) -> float:
     min_ = min(rgb)
     max_ = max(rgb)
     return _get_hue_from_rgb(rgb, min_, max_)
 
 
 @pytest.fixture(scope="module", params=range(100))
-def saturated_rgb_tuple() -> Tuple[float, float, float]:
+def saturated_rgb_tuple() -> tuple[float, float, float]:
     """Return a random rgb tuple with full saturation and full value."""
     vals = [0.0, 255.0, random.random() * 255]
     random.shuffle(vals)
@@ -47,7 +48,6 @@ def saturated_rgb_tuple() -> Tuple[float, float, float]:
 
 
 class TestIntConversion:
-
     def test_values_below_0_are_clipped(self) -> None:
         """Clip input values outside [0..255]."""
         assert float_to_8bit_int(-1) == 0
@@ -70,14 +70,17 @@ class TestHue:
 
 
 class TestHSV:
-    def test_vs_colormath(self, rgb_tuple: Tuple[float, float, float]) -> None:
+    def test_vs_colormath(self, rgb_tuple: tuple[float, float, float]) -> None:
         colormath_rgb = sRGBColor(*rgb_tuple, is_upscaled=True)
-        cm_hsv_tuple = convert_color(colormath_rgb, HSVColor).get_value_tuple()
+        cm_hsv_tuple = cast(
+            "tuple[float, ...]",
+            convert_color(colormath_rgb, HSVColor).get_value_tuple(),
+        )
         cm_hsv_tuple = (cm_hsv_tuple[0], cm_hsv_tuple[1] * 100, cm_hsv_tuple[2] * 100)
         our_hsv = rgb_to_hsv(rgb_tuple)
         assert np.allclose(cm_hsv_tuple, our_hsv)
 
-    def test_reverse(self, rgb_tuple: Tuple[float, float, float]) -> None:
+    def test_reverse(self, rgb_tuple: tuple[float, float, float]) -> None:
         """Test that the hue is the same when the rgb tuple is reversed."""
         hsv = rgb_to_hsv(rgb_tuple)
         rgb = hsv_to_rgb(hsv)
@@ -85,14 +88,17 @@ class TestHSV:
 
 
 class TestHsl:
-    def test_vs_colormath(self, rgb_tuple: Tuple[float, float, float]) -> None:
+    def test_vs_colormath(self, rgb_tuple: tuple[float, float, float]) -> None:
         colormath_rgb = sRGBColor(*rgb_tuple, is_upscaled=True)
-        cm_hsl_tuple = convert_color(colormath_rgb, HSLColor).get_value_tuple()
+        cm_hsl_tuple = cast(
+            "tuple[float, ...]",
+            convert_color(colormath_rgb, HSLColor).get_value_tuple(),
+        )
         cm_hsl_tuple = (cm_hsl_tuple[0], cm_hsl_tuple[1] * 100, cm_hsl_tuple[2] * 100)
         our_hsl = rgb_to_hsl(rgb_tuple)
         assert np.allclose(cm_hsl_tuple, our_hsl)
 
-    def test_reverse(self, rgb_tuple: Tuple[float, float, float]) -> None:
+    def test_reverse(self, rgb_tuple: tuple[float, float, float]) -> None:
         """Test that the hue is the same when the rgb tuple is reversed."""
         hsl = rgb_to_hsl(rgb_tuple)
         rgb = hsl_to_rgb(hsl)
@@ -111,7 +117,7 @@ class TestHex:
         assert rgb_to_hex((255, 0, 255)) == "#ff00ff"
         assert rgb_to_hex((128, 128, 128)) == "#808080"
 
-    def test_reverse(self, rgb_tuple: Tuple[float, float, float]) -> None:
+    def test_reverse(self, rgb_tuple: tuple[float, float, float]) -> None:
         """Test that the hue is the same when the rgb tuple is reversed."""
         rgb = float_tuple_to_8bit_int_tuple(rgb_tuple)
         hex_ = rgb_to_hex(rgb_tuple)
@@ -120,8 +126,7 @@ class TestHex:
 
 
 class TestVsColorsys:
-
-    def test_rgb_to_hsv(self, rgb_tuple: Tuple[float, float, float]) -> None:
+    def test_rgb_to_hsv(self, rgb_tuple: tuple[float, float, float]) -> None:
         """Test that the hue is the same when the rgb tuple is reversed."""
         hsv = rgb_to_hsv(rgb_tuple)
         rgb_floats = [x / 255 for x in rgb_tuple]
@@ -129,7 +134,7 @@ class TestVsColorsys:
         hsv2 = colorsys.rgb_to_hsv(*rgb_floats)
         assert np.allclose(hsv1, hsv2)
 
-    def test_rgb_to_hsl(self, rgb_tuple: Tuple[float, float, float]) -> None:
+    def test_rgb_to_hsl(self, rgb_tuple: tuple[float, float, float]) -> None:
         """Test that the hue is the same when the rgb tuple is reversed."""
         hsl = rgb_to_hsl(rgb_tuple)
         rgb_floats = [x / 255 for x in rgb_tuple]

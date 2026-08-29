@@ -4,15 +4,18 @@
 :created: 2024-08-22
 """
 
+# pyright: reportUnknownMemberType=false
+# pyright: reportUnknownVariableType=false
 # pyright: reportPrivateUsage=false
 
 import numpy as np
 
 from basic_colormath.conversion import (
     float_tuple_to_8bit_int_tuple,
+    hex_to_rgb,
     rgb_to_hex,
     rgb_to_hsl,
-    rgb_to_hsv, hex_to_rgb
+    rgb_to_hsv,
 )
 from basic_colormath.vec_conversion import (
     _get_hues_from_rgbs,
@@ -25,9 +28,11 @@ from basic_colormath.vec_conversion import (
     rgbs_to_hsv,
 )
 
+rng = np.random.default_rng()
+
 
 class TestGetHuesFromRgbs:
-    def test_explicit(self):
+    def test_explicit(self) -> None:
         rgbs = np.array(
             [
                 [0, 0, 0],
@@ -44,14 +49,14 @@ class TestGetHuesFromRgbs:
         # set mins as the minimum value for each of the rgb channels
         mins = np.min(rgbs, axis=-1)
         maxs = np.max(rgbs, axis=-1)
-        hues = _get_hues_from_rgbs(rgbs, mins, maxs)
+        hues = _get_hues_from_rgbs(rgbs, mins.astype(float), maxs.astype(float))
         np.testing.assert_array_almost_equal([0, 0, 60, 120, 180, 240, 300, 0], hues)
 
 
 class TestRgbsToHsvs:
-    def test_match_single(self):
+    def test_match_single(self) -> None:
         """Match result of single conversion mapped over array."""
-        rgbs = np.random.randint(0, 256, (10, 11, 12, 3), dtype=np.uint8)
+        rgbs = rng.integers(low=0, high=256, size=(10, 11, 12, 3), dtype=np.uint8)
         hsvs = rgbs_to_hsv(rgbs)
         for ixs in np.ndindex(rgbs.shape[:-1]):
             r, g, b = map(int, rgbs[ixs])
@@ -60,13 +65,13 @@ class TestRgbsToHsvs:
 
 
 class TestHscsToRgbs:
-    def test_roflection(self):
+    def test_roflection(self) -> None:
         """rgb to hsv to rgb to hsv
 
         hsv to rgb to hsv will not always be the same, because hue information is
         lost when saturation or value are zero.
         """
-        rgbs_a = np.random.randint(0, 256, (10, 11, 12, 3), dtype=np.uint8)
+        rgbs_a = rng.integers(low=0, high=256, size=(10, 11, 12, 3), dtype=np.uint8)
         hsvs_a = rgbs_to_hsv(rgbs_a)
         rgbs_b = hsvs_to_rgb(hsvs_a)
         hsvs_b = rgbs_to_hsv(rgbs_b)
@@ -74,9 +79,9 @@ class TestHscsToRgbs:
 
 
 class TestRgbsToHsls:
-    def test_match_single(self):
+    def test_match_single(self) -> None:
         """Match result of single conversion mapped over array."""
-        rgbs = np.random.randint(0, 256, (10, 11, 12, 3), dtype=np.uint8)
+        rgbs = rng.integers(low=0, high=256, size=(10, 11, 12, 3), dtype=np.uint8)
         hsls = rgbs_to_hsl(rgbs)
         for ixs in np.ndindex(rgbs.shape[:-1]):
             r, g, b = map(int, rgbs[ixs])
@@ -85,13 +90,13 @@ class TestRgbsToHsls:
 
 
 class TestHslsToRgbs:
-    def test_reflection(self):
+    def test_reflection(self) -> None:
         """rgb to hsl to rgb to hsl
 
         hsl to rgb to hsl will not always be the same, because hue information is
         lost when saturation or lightness are zero.
         """
-        rgbs_a = np.random.randint(0, 256, (10, 11, 12, 3), dtype=np.uint8)
+        rgbs_a = rng.integers(low=0, high=256, size=(10, 11, 12, 3), dtype=np.uint8)
         hsls_a = rgbs_to_hsl(rgbs_a)
         rgbs_b = hsls_to_rgb(hsls_a)
         hsls_b = rgbs_to_hsl(rgbs_b)
@@ -99,9 +104,9 @@ class TestHslsToRgbs:
 
 
 class TestRgbsToHexs:
-    def test_match_single(self):
+    def test_match_single(self) -> None:
         """Match result of single conversion mapped over array."""
-        rgbs = np.random.randint(0, 256, (10, 11, 12, 3), dtype=np.uint8)
+        rgbs = rng.integers(low=0, high=256, size=(10, 11, 12, 3), dtype=np.uint8)
         hexs = rgbs_to_hex(rgbs)
         for ixs in np.ndindex(rgbs.shape[:-1]):
             r, g, b = map(int, rgbs[ixs])
@@ -110,7 +115,7 @@ class TestRgbsToHexs:
 
 
 class TestHexsToRgbs:
-    def test_match_single(self):
+    def test_match_single(self) -> None:
         """Match result of single conversion mapped over array."""
         hexs = np.array(
             [
@@ -127,15 +132,17 @@ class TestHexsToRgbs:
         )
         rgbs = hexs_to_rgb(hexs)
         for ixs in np.ndindex(hexs.shape):
-            rgb = hex_to_rgb(hexs[ixs])
+            one_hex = hexs[ixs]
+            assert isinstance(one_hex, str)
+            rgb = hex_to_rgb(one_hex)
             np.testing.assert_array_almost_equal(rgbs[ixs], rgb)
 
-    def test_reflection(self):
+    def test_reflection(self) -> None:
         """rgb to hex to rgb
 
         hex to rgb to hex will always be the same.
         """
-        rgbs_a = np.random.randint(0, 256, (10, 11, 12, 3), dtype=np.uint8)
+        rgbs_a = rng.integers(low=0, high=256, size=(10, 11, 12, 3), dtype=np.uint8)
         hexs_a = rgbs_to_hex(rgbs_a)
         rgbs_b = hexs_to_rgb(hexs_a)
         hexs_b = rgbs_to_hex(rgbs_b)
@@ -143,9 +150,9 @@ class TestHexsToRgbs:
 
 
 class TestFloatsToUint8:
-    def test_match_single(self):
+    def test_match_single(self) -> None:
         """Match result of single conversion mapped over array."""
-        floats = np.random.rand(10, 11, 12, 3) * 255
+        floats = rng.random((10, 11, 12, 3)) * 255
         uint8s = floats_to_uint8(floats)
         for ixs in np.ndindex(floats.shape[:-1]):
             r, g, b = map(float, floats[ixs])

@@ -7,7 +7,10 @@
 # pyright: reportUnknownArgumentType=false
 # pyright: reportUnknownMemberType=false
 # pyright: reportUnknownParameterType=false
+# pyright: reportUnreachable=false
 
+import sys
+from collections.abc import Sequence
 from typing import Any, TypeAlias, TypeVar, cast
 
 import numpy as np
@@ -15,15 +18,22 @@ from numpy import typing as npt
 
 from basic_colormath.conversion import hex_to_rgb, rgb_to_hex
 
+if sys.version_info >= (3, 12):
+    _Floats: TypeAlias = npt.ArrayLike
+else:
+    _Floats: TypeAlias = float | Sequence["_Floats"] | npt.NDArray[np.number]
+
+_Strings: TypeAlias = str | Sequence["_Strings"] | npt.NDArray[np.str_]
 _FloatArray: TypeAlias = npt.NDArray[np.float64]
 _Uint8Array: TypeAlias = npt.NDArray[np.uint8]
 _TArray = TypeVar("_TArray", bound=npt.NDArray[Any])
+
 
 _MAX_8BIT = 255
 
 
 def _get_hues_from_rgbs(
-    rgbs: npt.ArrayLike, mins: _FloatArray, maxs: _FloatArray
+    rgbs: _Floats, mins: _FloatArray, maxs: _FloatArray
 ) -> _FloatArray:
     """Get the hue values in degrees from an array of rgb tuples.
 
@@ -77,7 +87,7 @@ def _sort_channels_given_hues(hues: _FloatArray, min_mid_max: _TArray) -> _TArra
     return rgbs
 
 
-def rgbs_to_hsv(rgbs: npt.ArrayLike) -> _FloatArray:
+def rgbs_to_hsv(rgbs: _Floats) -> _FloatArray:
     """Convert from rgb to hsv.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -98,7 +108,7 @@ def rgbs_to_hsv(rgbs: npt.ArrayLike) -> _FloatArray:
     return hsvs
 
 
-def hsvs_to_rgb(hsvs: npt.ArrayLike) -> _FloatArray:
+def hsvs_to_rgb(hsvs: _Floats) -> _FloatArray:
     """Convert from hsv to rgb.
 
     :param hsv: an array (...,3) of hue, sat, and val values
@@ -115,7 +125,7 @@ def hsvs_to_rgb(hsvs: npt.ArrayLike) -> _FloatArray:
     return _sort_channels_given_hues(hues, mins_mids_maxs)
 
 
-def rgbs_to_hsl(rgbs: npt.ArrayLike) -> _FloatArray:
+def rgbs_to_hsl(rgbs: _Floats) -> _FloatArray:
     """Convert rgb to hsl.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -142,7 +152,7 @@ def rgbs_to_hsl(rgbs: npt.ArrayLike) -> _FloatArray:
     return hsls
 
 
-def hsls_to_rgb(hsls: npt.ArrayLike) -> _FloatArray:
+def hsls_to_rgb(hsls: _Floats) -> _FloatArray:
     """Convert hsl to rgb.
 
     :param hsls: an array (...,3) of hue, sat, and lightness values
@@ -162,7 +172,7 @@ def hsls_to_rgb(hsls: npt.ArrayLike) -> _FloatArray:
 _BIG_INT: int = 2**32 - 1
 
 
-def floats_to_uint8(rgbs: npt.ArrayLike) -> _Uint8Array:
+def floats_to_uint8(rgbs: _Floats) -> _Uint8Array:
     """Convert a float between 0 and 255 to an int between 0 and 255.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -183,7 +193,7 @@ def floats_to_uint8(rgbs: npt.ArrayLike) -> _Uint8Array:
     return (big_ints >> 24).astype(np.uint8)
 
 
-def rgbs_to_hex(rgbs: npt.ArrayLike) -> npt.NDArray[np.str_]:
+def rgbs_to_hex(rgbs: _Floats) -> npt.NDArray[np.str_]:
     """Convert rgb to hex.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -194,7 +204,7 @@ def rgbs_to_hex(rgbs: npt.ArrayLike) -> npt.NDArray[np.str_]:
     return np.apply_along_axis(rgb_to_hex, -1, rgbs)
 
 
-def _hex_to_rgb(hex_: npt.ArrayLike) -> _Uint8Array:
+def _hex_to_rgb(hex_: _Floats) -> _Uint8Array:
     """Convert a hex string to an rgb tuple.
 
     :param hex_: A hex string. e.g. '#ff0000'
@@ -204,7 +214,7 @@ def _hex_to_rgb(hex_: npt.ArrayLike) -> _Uint8Array:
     return np.array(hex_to_rgb(hex_[0]), dtype=np.uint8)
 
 
-def hexs_to_rgb(hexs: npt.ArrayLike) -> _Uint8Array:
+def hexs_to_rgb(hexs: _Strings) -> _Uint8Array:
     """Convert hex to rgb.
 
     :param hexs: an array (..., 1) of hex strings. e.g. '#ff0000'

@@ -67,6 +67,7 @@ convention = "pep257"
     "S101",
     "D",
     "F401",
+    "PLR2004",  # magic numbers
 ] # Ignore assertions, docstrings, unused imports in test files
 
 [tool.ruff.format]

@@ -1,7 +1,7 @@
 ci:
   skip: [basedpyright]
 
-exclude: "typings|tests"
+exclude: "typings"
 
 repos:
 

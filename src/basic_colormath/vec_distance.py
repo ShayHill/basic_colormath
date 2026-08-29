@@ -32,9 +32,11 @@ f(d, x), f(d, y), f(d, z)
 # pyright: reportUnknownMemberType=false
 # pyright: reportUnknownParameterType=false
 # pyright: reportUnknownVariableType=false
+# pyright: reportUnreachable=false
 
 import math
-from collections.abc import Callable
+import sys
+from collections.abc import Callable, Sequence
 from typing import TypeAlias, cast
 
 import numpy as np
@@ -42,6 +44,12 @@ from numpy import typing as npt
 
 from basic_colormath.vec_conversion import hexs_to_rgb
 
+if sys.version_info >= (3, 12):
+    _Floats: TypeAlias = npt.ArrayLike
+else:
+    _Floats: TypeAlias = float | Sequence["_Floats"] | npt.NDArray[np.number]
+
+_Strings: TypeAlias = str | Sequence["_Strings"] | npt.NDArray[np.str_]
 _FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 _RGB_TO_XYZ = [
@@ -171,7 +179,7 @@ def _labs_to_xyz(labs: _FloatArray) -> _FloatArray:
     return np.stack([x, y, z], axis=-1)
 
 
-def rgbs_to_lab(rgbs: npt.ArrayLike) -> _FloatArray:
+def rgbs_to_lab(rgbs: _Floats) -> _FloatArray:
     """Convert RGB to Lab.
 
     :param rgbs: an array (..., 3) of red, green, and blue values
@@ -183,7 +191,7 @@ def rgbs_to_lab(rgbs: npt.ArrayLike) -> _FloatArray:
     return _xyzs_to_lab(xyzs)
 
 
-def labs_to_rgb(labs: npt.ArrayLike) -> _FloatArray:
+def labs_to_rgb(labs: _Floats) -> _FloatArray:
     """Convert Lab to RGB.
 
     :param labs: an array (..., 3) of Lab values
@@ -193,7 +201,7 @@ def labs_to_rgb(labs: npt.ArrayLike) -> _FloatArray:
     return _xyzs_to_rgb(xyzs)
 
 
-def hexs_to_lab(hexs: npt.ArrayLike) -> _FloatArray:
+def hexs_to_lab(hexs: _Strings) -> _FloatArray:
     """Convert an array of hex colors to Lab.
 
     :param hexs: an array (...) of hex colors
@@ -209,7 +217,7 @@ def hexs_to_lab(hexs: npt.ArrayLike) -> _FloatArray:
 # ===============================================================================
 
 
-def get_sqeuclideans(rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike) -> _FloatArray:
+def get_sqeuclideans(rgbs_a: _Floats, rgbs_b: _Floats) -> _FloatArray:
     """Calculate the squared Euclidean distances between two rgb arrays.
 
     :param rgbs_a: an array (..., 3) of red, green, and blue values
@@ -222,7 +230,7 @@ def get_sqeuclideans(rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike) -> _FloatArra
     return np.sum((rgbs_a - rgbs_b) ** 2, axis=-1)
 
 
-def get_sqeuclideans_hex(hexs_a: npt.ArrayLike, hexs_b: npt.ArrayLike) -> _FloatArray:
+def get_sqeuclideans_hex(hexs_a: _Strings, hexs_b: _Strings) -> _FloatArray:
     """Calculate the squared Euclidean distances between two hex arrays.
 
     :param hexs_a: an array (...) of hex colors
@@ -234,7 +242,7 @@ def get_sqeuclideans_hex(hexs_a: npt.ArrayLike, hexs_b: npt.ArrayLike) -> _Float
     return get_sqeuclideans(rgbs_a, rgbs_b)
 
 
-def get_euclideans(rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike) -> _FloatArray:
+def get_euclideans(rgbs_a: _Floats, rgbs_b: _Floats) -> _FloatArray:
     """Calculate the Euclidean distance between two RGB colors.
 
     :param rgb_a: The first RGB color.
@@ -244,7 +252,7 @@ def get_euclideans(rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike) -> _FloatArray:
     return get_sqeuclideans(rgbs_a, rgbs_b) ** 0.5
 
 
-def get_euclideans_hex(hex_a: npt.ArrayLike, hex_b: npt.ArrayLike) -> _FloatArray:
+def get_euclideans_hex(hex_a: _Strings, hex_b: _Strings) -> _FloatArray:
     """Calculate the Euclidean distance between two HEX colors.
 
     :param hex_a: The first HEX color.
@@ -321,7 +329,7 @@ def _adjust_delta_hp(h1p: _FloatArray, h2p: _FloatArray) -> _FloatArray:
     return delta_hp
 
 
-def get_deltas_e_lab(lab_a: npt.ArrayLike, lab_b: npt.ArrayLike) -> _FloatArray:
+def get_deltas_e_lab(lab_a: _Floats, lab_b: _Floats) -> _FloatArray:
     """Calculate the Delta E (CIE2000) of two Lab colors."""
     lab_a = np.asarray(lab_a, dtype=np.float64)
     lab_b = np.asarray(lab_b, dtype=np.float64)
@@ -374,7 +382,7 @@ def get_deltas_e_lab(lab_a: npt.ArrayLike, lab_b: npt.ArrayLike) -> _FloatArray:
     return sum(e_terms) ** 0.5
 
 
-def get_deltas_e(rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike) -> _FloatArray:
+def get_deltas_e(rgbs_a: _Floats, rgbs_b: _Floats) -> _FloatArray:
     """Calculate the Delta E (CIE2000) of two arrays of RGB colors.
 
     :param rgbs_a: an array (..., 3) of red, green, and blue values
@@ -389,7 +397,7 @@ def get_deltas_e(rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike) -> _FloatArray:
     return get_deltas_e_lab(labs_a, labs_b)
 
 
-def get_deltas_e_hex(hexs_a: npt.ArrayLike, hexs_b: npt.ArrayLike) -> _FloatArray:
+def get_deltas_e_hex(hexs_a: _Strings, hexs_b: _Strings) -> _FloatArray:
     """Calculate the Delta E (CIE2000) of two arrays of HEX colors.
 
     :param hexs_a: an array (...) of hex colors, e.g. '#ff0000'
@@ -408,7 +416,7 @@ def get_deltas_e_hex(hexs_a: npt.ArrayLike, hexs_b: npt.ArrayLike) -> _FloatArra
 
 
 def _build_proximity_matrix(
-    colors: npt.ArrayLike, func: Callable[[npt.ArrayLike, npt.ArrayLike], _FloatArray]
+    colors: _Floats, func: Callable[[_Floats, _Floats], _FloatArray]
 ) -> _FloatArray:
     """Build a proximity matrix from a list of colors.
 
@@ -432,9 +440,9 @@ def _build_proximity_matrix(
 
 
 def _build_cross_proximity_matrix(
-    colors_a: npt.ArrayLike,
-    colors_b: npt.ArrayLike,
-    func: Callable[[npt.ArrayLike, npt.ArrayLike], _FloatArray],
+    colors_a: _Floats,
+    colors_b: _Floats,
+    func: Callable[[_Floats, _Floats], _FloatArray],
 ) -> _FloatArray:
     """Build a cross-proximity matrix from two lists of colors.
 
@@ -452,7 +460,7 @@ def _build_cross_proximity_matrix(
 
 
 def get_delta_e_matrix_lab(
-    labs_a: npt.ArrayLike, labs_b: npt.ArrayLike | None = None
+    labs_a: _Floats, labs_b: _Floats | None = None
 ) -> _FloatArray:
     """Build a Delta E (CIE2000) matrix from a list of Lab colors.
 
@@ -471,9 +479,7 @@ def get_delta_e_matrix_lab(
     return _build_cross_proximity_matrix(labs_a, labs_b, get_deltas_e_lab)
 
 
-def get_delta_e_matrix(
-    rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike | None = None
-) -> _FloatArray:
+def get_delta_e_matrix(rgbs_a: _Floats, rgbs_b: _Floats | None = None) -> _FloatArray:
     """Build a Delta E (CIE2000) matrix from a list of RGB colors.
 
     :param rgbs_a: an array (n, 3) of red, green, and blue values
@@ -488,7 +494,7 @@ def get_delta_e_matrix(
 
 
 def get_delta_e_matrix_hex(
-    hexs_a: npt.ArrayLike, hexs_b: npt.ArrayLike | None = None
+    hexs_a: _Strings, hexs_b: _Strings | None = None
 ) -> _FloatArray:
     """Build a Delta E (CIE2000) matrix from a list of HEX colors.
 
@@ -502,7 +508,7 @@ def get_delta_e_matrix_hex(
 
 
 def get_sqeuclidean_matrix(
-    rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike | None = None
+    rgbs_a: _Floats, rgbs_b: _Floats | None = None
 ) -> _FloatArray:
     """Build a squared Euclidean distance matrix from a list of RGB colors.
 
@@ -518,7 +524,7 @@ def get_sqeuclidean_matrix(
 
 
 def get_sqeuclidean_matrix_hex(
-    hexs_a: npt.ArrayLike, hexs_b: npt.ArrayLike | None = None
+    hexs_a: _Strings, hexs_b: _Strings | None = None
 ) -> _FloatArray:
     """Build a squared Euclidean distance matrix from a list of HEX colors.
 
@@ -531,9 +537,7 @@ def get_sqeuclidean_matrix_hex(
     return get_sqeuclidean_matrix(rgbs_a, rgbs_b)
 
 
-def get_euclidean_matrix(
-    rgbs_a: npt.ArrayLike, rgbs_b: npt.ArrayLike | None = None
-) -> _FloatArray:
+def get_euclidean_matrix(rgbs_a: _Floats, rgbs_b: _Floats | None = None) -> _FloatArray:
     """Build a Euclidean distance matrix from a list of RGB colors.
 
     :param rgbs_a: an array (n, 3) of red, green, and blue values
@@ -548,7 +552,7 @@ def get_euclidean_matrix(
 
 
 def get_euclidean_matrix_hex(
-    hexs_a: npt.ArrayLike, hexs_b: npt.ArrayLike | None = None
+    hexs_a: _Strings, hexs_b: _Strings | None = None
 ) -> _FloatArray:
     """Build a Euclidean distance matrix from a list of HEX colors.
 

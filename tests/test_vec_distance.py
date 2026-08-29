@@ -5,6 +5,8 @@
 """
 
 # pyright: reportPrivateUsage=false
+# pyright: reportUnknownMemberType=false
+# pyright: reportUnknownVariableType=false
 
 import numpy as np
 
@@ -71,7 +73,7 @@ class TestRgbsToXyz:
     def test_match_single(self) -> None:
         """Match result of single conversion mapped over array."""
         rgbs = rng.integers(0, 256, (10, 11, 12, 3), dtype=np.uint8)
-        xyzs = _rgbs_to_xyz(rgbs)
+        xyzs = _rgbs_to_xyz(rgbs.astype(float))
         for ixs in np.ndindex(rgbs.shape[:-1]):
             r, g, b = map(int, rgbs[ixs])
             xyz = _rgb_to_xyz((r, g, b))
@@ -81,7 +83,7 @@ class TestRgbsToXyz:
 class TestXyzsToLab:
     def test_match_single(self) -> None:
         """Match result of single conversion mapped over array."""
-        xyzs = np.random.rand(10, 11, 12, 3)
+        xyzs = rng.random((10, 11, 12, 3))
         rgbs = _xyzs_to_lab(xyzs)
         for ixs in np.ndindex(xyzs.shape[:-1]):
             x, y, z = xyzs[ixs]
@@ -108,7 +110,9 @@ class TestHexsToLab:
         )
         labs = hexs_to_lab(hexs)
         for ixs in np.ndindex(hexs.shape):
-            lab = hex_to_lab(hexs[ixs])
+            one_hex = hexs[ixs]
+            assert isinstance(one_hex, str)
+            lab = hex_to_lab(one_hex)
             np.testing.assert_array_almost_equal(labs[ixs], lab)
 
 
@@ -143,7 +147,11 @@ class TestCieDistance:
         )
         deltas = get_deltas_e_hex(hexs_a, hexs_b)
         for ixs in np.ndindex(hexs_a.shape):
-            delta = get_delta_e_hex(hexs_a[ixs], hexs_b[ixs])
+            hex_a = hexs_a[ixs]
+            hex_b = hexs_b[ixs]
+            assert isinstance(hex_a, str)
+            assert isinstance(hex_b, str)
+            delta = get_delta_e_hex(hex_a, hex_b)
             np.testing.assert_almost_equal(deltas[ixs], delta)
 
 
@@ -167,7 +175,11 @@ class TestSquaredEucDistance:
         )
         sqeuclideans = get_sqeuclideans_hex(hexs_a, hexs_b)
         for ixs in np.ndindex(hexs_a.shape):
-            sqeuclidean = get_sqeuclidean_hex(hexs_a[ixs], hexs_b[ixs])
+            hex_a = hexs_a[ixs]
+            hex_b = hexs_b[ixs]
+            assert isinstance(hex_a, str)
+            assert isinstance(hex_b, str)
+            sqeuclidean = get_sqeuclidean_hex(hex_a, hex_b)
             np.testing.assert_almost_equal(sqeuclideans[ixs], sqeuclidean)
 
 
@@ -191,7 +203,11 @@ class TestEuclideanDistance:
         )
         euclideans = get_euclideans_hex(hexs_a, hexs_b)
         for ixs in np.ndindex(hexs_a.shape):
-            euclidean = get_euclidean_hex(hexs_a[ixs], hexs_b[ixs])
+            hex_a = hexs_a[ixs]
+            hex_b = hexs_b[ixs]
+            assert isinstance(hex_a, str)
+            assert isinstance(hex_b, str)
+            euclidean = get_euclidean_hex(hex_a, hex_b)
             np.testing.assert_almost_equal(euclideans[ixs], euclidean)
 
 
@@ -217,9 +233,7 @@ class TestProximityMatrices:
 
     def test_match_single_delta_e_hex(self) -> None:
         """Match result of single conversion mapped over array."""
-        hexs_a = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12
-        )
+        hexs_a = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12)
         p_mat = get_delta_e_matrix_hex(hexs_a)
         for i, aaa in enumerate(hexs_a):
             for j, bbb in enumerate(hexs_a):
@@ -237,9 +251,7 @@ class TestProximityMatrices:
 
     def test_match_single_sqeuclidean_hex(self) -> None:
         """Match result of single conversion mapped over array."""
-        hexs_a = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12
-        )
+        hexs_a = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12)
         p_mat = get_sqeuclidean_matrix_hex(hexs_a)
         for i, aaa in enumerate(hexs_a):
             for j, bbb in enumerate(hexs_a):
@@ -257,9 +269,7 @@ class TestProximityMatrices:
 
     def test_match_single_euclidean_hex(self) -> None:
         """Match result of single conversion mapped over array."""
-        hexs_a = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12
-        )
+        hexs_a = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12)
         p_mat = get_euclidean_matrix_hex(hexs_a)
         for i, aaa in enumerate(hexs_a):
             for j, bbb in enumerate(hexs_a):
@@ -292,12 +302,8 @@ class TestCrossProximityMatrices:
 
     def test_match_single_delta_e_hex(self) -> None:
         """Match result of single conversion mapped over array."""
-        hexs_a = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12
-        )
-        hexs_b = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 24
-        )
+        hexs_a = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12)
+        hexs_b = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 24)
         p_mat = get_delta_e_matrix_hex(hexs_a, hexs_b)
         for i, aaa in enumerate(hexs_a):
             for j, bbb in enumerate(hexs_b):
@@ -316,12 +322,8 @@ class TestCrossProximityMatrices:
 
     def test_match_single_sqeuclidean_hex(self) -> None:
         """Match result of single conversion mapped over array."""
-        hexs_a = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12
-        )
-        hexs_b = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 24
-        )
+        hexs_a = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12)
+        hexs_b = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 24)
         p_mat = get_sqeuclidean_matrix_hex(hexs_a, hexs_b)
         for i, aaa in enumerate(hexs_a):
             for j, bbb in enumerate(hexs_b):
@@ -340,16 +342,10 @@ class TestCrossProximityMatrices:
 
     def test_match_single_euclidean_hex(self) -> None:
         """Match result of single conversion mapped over array."""
-        hexs_a = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12
-        )
-        hexs_b = rng.choice(
-            ["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 24
-        )
+        hexs_a = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 12)
+        hexs_b = rng.choice(["#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff"], 24)
         p_mat = get_euclidean_matrix_hex(hexs_a, hexs_b)
         for i, aaa in enumerate(hexs_a):
             for j, bbb in enumerate(hexs_b):
                 euclidean = get_euclidean_hex(aaa, bbb)
                 np.testing.assert_almost_equal(p_mat[i, j], euclidean)
-
-
