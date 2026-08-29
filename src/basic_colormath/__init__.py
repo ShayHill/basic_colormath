@@ -4,6 +4,8 @@
 :created: 2023-04-30
 """
 
+# pyright: reportUnknownVariableType=false
+
 # Numpy is an optional dependency. If it's not installed, the numpy functions will
 # not be available.
 try:

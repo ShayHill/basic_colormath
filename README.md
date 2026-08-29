@@ -66,13 +66,18 @@ Converts to other simple formats.
 ```python
 def rgb_to_hsv(rgb: Rgb) -> Hsv: ...
 
+
 def hsv_to_rgb(hsv: Hsv) -> Rgb: ...
+
 
 def rgb_to_hsl(rgb: Rgb) -> Hsl: ...
 
+
 def hsl_to_rgb(hsl: Hsl) -> Rgb: ...
 
+
 def rgb_to_hex(rgb: Rgb) -> Hex: ...
+
 
 def hex_to_rgb(hex_: Hex) -> Rgb: ...
 ```
@@ -111,6 +116,7 @@ mix_hex(*hex_args: Hex, ratio: _Ratio=None) -> Hex
 
 ```python
 def float_to_8bit_int(float_: float | int) -> int: ...
+
 
 def float_tuple_to_8bit_int_tuple(rgb: Rgb) -> tuple[int, int, int]: ...
 ```
@@ -156,6 +162,7 @@ Sadly, [python-colormath](https://github.com/gtaylor/python-colormath/tree/maste
 import numpy as np
 import numpy.typing as npt
 
+
 def _patch_asscalar(a: npt.NDArray[np.float64]) -> float:
     """Alias for np.item(). Patch np.asscalar for colormath.
 
@@ -163,6 +170,7 @@ def _patch_asscalar(a: npt.NDArray[np.float64]) -> float:
     :return: input array as scalar
     """
     return a.item()
+
 
 np.asscalar = _patch_asscalar  # type: ignore
 ```

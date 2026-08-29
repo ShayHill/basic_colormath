@@ -4,6 +4,10 @@
 :created: 2024-08-22
 """
 
+# pyright: reportUnknownArgumentType=false
+# pyright: reportUnknownMemberType=false
+# pyright: reportUnknownParameterType=false
+
 from typing import Any, TypeAlias, TypeVar, cast
 
 import numpy as np
@@ -81,8 +85,9 @@ def rgbs_to_hsv(rgbs: npt.ArrayLike) -> _FloatArray:
     :return: an array (...,3) of hue, saturation, and value
         [0, 360), [0, 100], [0, 100].
     """
-    mins = np.min(rgbs, axis=-1)
-    maxs = np.max(rgbs, axis=-1)
+    rgbs_array = np.asarray(rgbs, dtype=np.float64)
+    mins = np.min(rgbs_array, axis=-1)
+    maxs = np.max(rgbs_array, axis=-1)
     hsvs = np.zeros_like(rgbs).astype(float)
     hsvs[..., 0] = _get_hues_from_rgbs(rgbs, mins, maxs)
     maxzero = maxs == 0
@@ -118,8 +123,9 @@ def rgbs_to_hsl(rgbs: npt.ArrayLike) -> _FloatArray:
     :return: an array (...,3) of hue, sat, and lightness values
         [0, 360), [0, 100], [0, 100].
     """
-    mins = np.min(rgbs, axis=-1).astype(float)
-    maxs = np.max(rgbs, axis=-1).astype(float)
+    rgbs_array = np.asarray(rgbs, dtype=np.float64)
+    mins = np.min(rgbs_array, axis=-1).astype(float)
+    maxs = np.max(rgbs_array, axis=-1).astype(float)
     deltas = maxs - mins
     delta_mask = deltas != 0
     hsls = np.zeros_like(rgbs).astype(float)
@@ -170,9 +176,9 @@ def floats_to_uint8(rgbs: npt.ArrayLike) -> _Uint8Array:
     Numpy uses floor for int conversion. Round would be better, but would still
     "short change" 0 and 255. This function gives a better distribution.
     """
-    rgbs = np.asarray(rgbs)
-    if rgbs.dtype is np.uint8:
-        return rgbs.astype(np.uint8)
+    rgbs_array = np.asarray(rgbs)
+    if rgbs_array.dtype is np.uint8:
+        return rgbs_array.astype(np.uint8)
     big_ints = (np.clip(rgbs, 0, 255) / 255 * _BIG_INT).astype(np.uint32)
     return (big_ints >> 24).astype(np.uint8)
 

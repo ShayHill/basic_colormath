@@ -28,6 +28,11 @@ f(d, x), f(d, y), f(d, z)
 :created: 2024-08-22
 """
 
+# pyright: reportUnknownArgumentType=false
+# pyright: reportUnknownMemberType=false
+# pyright: reportUnknownParameterType=false
+# pyright: reportUnknownVariableType=false
+
 import math
 from collections.abc import Callable
 from typing import TypeAlias, cast
