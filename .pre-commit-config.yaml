@@ -59,7 +59,7 @@ repos:
   - id: remove-tabs
 
 # ruff config (select/ignore/fixable/target-version) lives in pyproject.toml
-- repo: https://github.com/charliermarsh/ruff-pre-commit
+- repo: https://github.com/astral-sh/ruff-pre-commit
   rev: 'v0.16.5'
   hooks:
     - id: ruff
