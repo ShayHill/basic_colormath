@@ -59,8 +59,8 @@ repos:
   - id: remove-tabs
 
 # ruff config (select/ignore/fixable/target-version) lives in pyproject.toml
-- repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: 'v0.16.5'
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: 'v0.16.8'
   hooks:
     - id: ruff
       args: ["--fix"]
@@ -69,6 +69,6 @@ repos:
 
 # basedpyright config (select/ignore/fixable/target-version) lives in pyproject.toml
 - repo: https://github.com/DetachHead/basedpyright-pre-commit-mirror
-  rev: 1.39.10
+  rev: 1.40.1
   hooks:
     - id: basedpyright
