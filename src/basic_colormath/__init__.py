@@ -4,14 +4,19 @@
 :created: 2023-04-30
 """
 
-# pyright: reportUnknownVariableType=false
-
 # Numpy is an optional dependency. If it's not installed, the numpy functions will
 # not be available.
 try:
-    import numpy  # noqa: ICN001
+    import numpy
 except ImportError:
     numpy = None
+
+# Pymixbox is an optional dependency. If it's not installed, the mixbox functions
+# will not be available.
+try:
+    import mixbox  # pyright: ignore[reportMissingTypeStubs]
+except ImportError:
+    mixbox = None
 
 
 from basic_colormath.conversion import (
@@ -115,3 +120,8 @@ if numpy:
         "rgbs_to_hsv",
         "rgbs_to_lab",
     ]
+
+if mixbox:
+    from basic_colormath.mb_mixer import mixbox_hex, mixbox_rgb
+
+    __all__ += ["mixbox_hex", "mixbox_rgb"]

@@ -5,8 +5,9 @@ Everything I wanted to salvage from the [python-colormath](https://github.com/gt
 * Perceptual (DeltaE CIE 2000) and Euclidean distance between colors
 * Conversion between RGB, HSV, HSL, Lab, and 8-bit hex colors
 * Some convenience functions for RGB tuples and 8-bit hex color strings
-* Vectorized functions for numpy arrays
-* Proximity and cross-proximity (rectangular) matrices for numpy arrays
+* A typed interface for [Mixbox](https://scrtwpns.com/mixbox.pdf) color mixing (if Mixbox is present)
+* Vectorized functions for numpy arrays (if numpy is present)
+* Proximity and cross-proximity (rectangular) matrices for numpy arrays (if numpy is present)
 
 Lab color format is exciting because it can cover a larger colorspace than RGB. But don't get *too* excited yet. If you convert an RGB tuple to Lab *with no additional information*, then the result will—of course—*not* contain more information than the RGB tuple you converted from. Other parameters are necessary to get anything out of these elaborate formats. I don't know how to do that, and most likely neither do you, so why not drop all of that complexity?
 
@@ -112,6 +113,24 @@ mix_hex(*hex_args: Hex, ratio: _Ratio=None) -> Hex
     # Mix any number of hex colors.
 ```
 
+## Mixbox mixing
+
+If [pymixbox](https://pypi.org/project/pymixbox/) is installed in your Python
+environment, basic_colormath provides `mixbox_rgb` and `mixbox_hex`.
+These functions provide a typed subset of Mixbox's color mixing functions using the
+basic_colormath interface and ratio handling.
+
+```python
+mixbox_rgb(*rgb_args: Rgb, ratio: _Ratio=None) -> Rgb
+    # Mix any number of RGB colors with Mixbox.
+
+mixbox_hex(*hex_args: Hex, ratio: _Ratio=None) -> Hex
+    # Mix any number of hex colors with Mixbox.
+```
+
+Pymixbox is licensed under the more restrictive
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) license. Pymixbox is not a dependency of basic_colormath and the basic_colormath license does not apply to pymixbox.
+
 ## better float to int conversion
 
 ```python
@@ -145,6 +164,8 @@ If you have numpy installed in your Python environment, basic_colormath will pro
 | rgb_to_lab                    | rgbs_to_lab                   |                            |
 | mix_hex                       |                               |                            |
 | mix_rgb                       |                               |                            |
+| mixbox_hex                    |                               |                            |
+| mixbox_rgb                    |                               |                            |
 | scale_hex                     |                               |                            |
 | scale_rgb                     |                               |                            |
 

@@ -32,10 +32,9 @@ dev = [
     "commitizen",
     "numpy",
     "pre-commit",
+    "pymixbox",
     "pytest",
-
 ]
-extra = ["numpy"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -94,6 +93,7 @@ ignore = [
     "N802",    # function name should be lowercase
     "N803",    # argument name should be lowercase
     "N806",    # variable in function should be lowercase
+    "ICN001",  # import numpy as np
 ]
 
 
