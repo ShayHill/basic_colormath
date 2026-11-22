@@ -8,22 +8,22 @@ license = "MIT"
 authors = [
     { name = "Shay Hill", email = "shay_public@hotmail.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Typing :: Typed",
 ]
 dependencies = []
 
 [build-system]
-requires = ["uv_build>=0.9.4,<0.10.0"]
+requires = ["uv_build>=0.12.19,<0.13.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
@@ -35,6 +35,7 @@ dev = [
     "pymixbox",
     "pytest",
 ]
+
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -56,7 +57,7 @@ log_cli = true
 
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 exclude = ["typings", ".venv"]
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
@@ -102,7 +103,7 @@ include = ["src", "tests"]
 exclude = ["**/__pycache__.py"]
 ignore = ["typings", ".venv"]
 
-pythonVersion = "3.10"
+pythonVersion = "3.11"
 pythonPlatform = "All"
 
 typeCheckingMode = "strict"

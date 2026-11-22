@@ -189,7 +189,7 @@ def floats_to_uint8(rgbs: _Floats) -> _Uint8Array:
     rgbs_array = np.asarray(rgbs)
     if rgbs_array.dtype is np.uint8:
         return rgbs_array.astype(np.uint8)
-    big_ints = (np.clip(rgbs, 0, 255) / 255 * _BIG_INT).astype(np.uint32)
+    big_ints = (np.clip(np.array(rgbs), 0, 255) / 255 * _BIG_INT).astype(np.uint32)
     return (big_ints >> 24).astype(np.uint8)
 
 
