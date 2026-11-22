@@ -4,6 +4,8 @@
 :created: 2026-10-10
 """
 
+import math
+
 
 def _split_float(f: float, num: int) -> tuple[float, ...]:
     """Divide a float into num parts.
@@ -45,13 +47,16 @@ def infer_ps(ratio: float | tuple[float, ...] | None, num: int) -> tuple[float, 
         msg = f"ratios has {len(ratio)} elements, but only <= {num} are allowed"
         raise ValueError(msg)
 
-    sum_ratios = sum(ratio)
-    missing = num - len(ratio)
-    filled = ratio + _split_float(1 - sum_ratios, missing)
+    if len(ratio) == num:
+        filled = ratio
+    else:
+        missing = num - len(ratio)
+        filled = ratio + _split_float(1 - sum(ratio), missing)
+
     sum_ratios = sum(filled)
+    if math.isclose(sum_ratios, 1):
+        return filled
     if sum_ratios <= 0:
         msg = f"ratios must sum to > 0, not {sum_ratios}"
         raise ValueError(msg)
-    if sum_ratios == 1:
-        return filled
     return tuple(r / sum_ratios for r in filled)
