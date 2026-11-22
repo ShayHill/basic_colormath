@@ -122,6 +122,6 @@ if numpy:
     ]
 
 if mixbox:
-    from basic_colormath.mb_mixer import mixbox_hex, mixbox_rgb
+    from basic_colormath.mb_mixer import mixbox_hex, mixbox_latent, mixbox_rgb
 
-    __all__ += ["mixbox_hex", "mixbox_rgb"]
+    __all__ += ["mixbox_hex", "mixbox_latent", "mixbox_rgb"]

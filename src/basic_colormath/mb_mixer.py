@@ -27,6 +27,22 @@ def _scale_latent(latent: Latent, scalar: float) -> Latent:
     return a, b, c, d, e, f, g
 
 
+def mixbox_latent(*latent_args: Latent, ratio: Ratio = None) -> Rgb:
+    """Mix any number of latent colors.
+
+    :param latent_args: mixbox latent colors (a, b, c, d, e, f, g)
+    :param ratio: 0.0 to 1.0 for the weight of the first latent_arg or a tuple of floats
+        to distribute across latent_args or None for equal ratios. Ratios will be
+        normalized and (if fewer ratios than colors are provided) the remaining
+        ratios will be equal.
+    :return: rgb tuple ([0, 255], [0, 255], [0, 255])
+    """
+    ps = infer_ps(ratio, len(latent_args))
+    lats = [_scale_latent(t, p) for t, p in zip(latent_args, ps, strict=True)]
+    a, b, c, d, e, f, g = tuple(sum(i) for i in zip(*lats, strict=True))
+    return mixbox.latent_to_rgb((a, b, c, d, e, f, g))  # pyright: ignore[reportUnknownMemberType]
+
+
 def mixbox_rgb(*rgb_args: RgbLike, ratio: Ratio = None) -> Rgb:
     """Mix any number of rgb tuples.
 
@@ -37,11 +53,7 @@ def mixbox_rgb(*rgb_args: RgbLike, ratio: Ratio = None) -> Rgb:
         ratios will be equal.
     :return: rgb tuple ([0, 255], [0, 255], [0, 255])
     """
-    ps = infer_ps(ratio, len(rgb_args))
-    ts: list[Latent] = [mixbox.rgb_to_latent(rgb) for rgb in rgb_args]  # pyright: ignore[reportUnknownMemberType]
-    ts = [_scale_latent(t, p) for t, p in zip(ts, ps, strict=True)]
-    a, b, c, d, e, f, g = tuple(sum(i) for i in zip(*ts, strict=True))
-    return mixbox.latent_to_rgb((a, b, c, d, e, f, g))  # pyright: ignore[reportUnknownMemberType]
+    return mixbox_latent(*map(mixbox.rgb_to_latent, rgb_args), ratio=ratio)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
 
 
 def mixbox_hex(*hex_args: Hex, ratio: Ratio = None) -> Hex:
